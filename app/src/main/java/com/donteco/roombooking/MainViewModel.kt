@@ -1,19 +1,18 @@
 package com.donteco.roombooking
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.concurrent.fixedRateTimer
 
 class MainViewModel : ViewModel() {
 
-    val currentEvent: MutableLiveData<Event?> = MutableLiveData()
+    private val currentEvent: MutableLiveData<Event?> = MutableLiveData()
 
-    val status: MutableLiveData<Status> = MutableLiveData()
+    private val status: MutableLiveData<Status> = MutableLiveData()
 
     private val _mainColor: MutableLiveData<Int> = MutableLiveData()
     val mainColor: LiveData<Int>
@@ -27,13 +26,18 @@ class MainViewModel : ViewModel() {
     val roomText: LiveData<String>
         get() = _roomText
 
-    val repo: EventRepo = EventRepo()
+    private val repo: EventRepo = EventRepo()
+
+    private val eventList = repo.getEventsLive()
+    private val repoObserver = Observer<Array<Event>> {
+        setEvents(it)
+    }
 
     init {
         setstatus(Status.STATUS_UNKNOWN)
-        repo.getEventsLive().observeForever {
-            setEvents(it)
-        }
+
+        eventList.observeForever(repoObserver)
+
         fixedRateTimer("Time", true, 2000, 5000) {
             _time.postValue(
                 SimpleDateFormat(
@@ -46,10 +50,8 @@ class MainViewModel : ViewModel() {
     }
 
     //Updating state
-    fun update() {
+    private fun update() {
         val closest = findClosestEvent()
-        if (closest != this.closestEvent)
-            closestEvent = closest
         if (closest != null) {
             currentEvent.postValue(closest)
             if (closest.isEventTakesPlaceNow()) {
@@ -69,7 +71,6 @@ class MainViewModel : ViewModel() {
     }
 
     private var events = repo.getEvents()
-    private var closestEvent: Event? = null
 
     private fun setEvents(eventsq: Array<Event>) {
         Log("Setting event list $eventsq")
@@ -83,7 +84,7 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun setstatus(newStatus: Status) {
+    private fun setstatus(newStatus: Status) {
         status.postValue(newStatus)
         _mainColor.postValue(
             when (newStatus) {
@@ -104,8 +105,8 @@ class MainViewModel : ViewModel() {
     }
 
     override fun onCleared() {
+        eventList.removeObserver(repoObserver)
         super.onCleared()
-
     }
 
     enum class Status(val num: Int) {
