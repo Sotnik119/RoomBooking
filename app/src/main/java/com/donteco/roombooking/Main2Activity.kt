@@ -31,5 +31,6 @@ class Main2Activity : AppCompatActivity() {
 
     fun go() {
         day_view.setRowSize(size)
+        date_text.text = size.toString()
     }
 }

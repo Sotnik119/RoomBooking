@@ -2,9 +2,11 @@ package com.donteco.roombooking
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import kotlinx.android.synthetic.main.day_view_event.view.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -16,7 +18,7 @@ class DayView @JvmOverloads constructor(
 ) :
     FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
     private val dayViewLayout = DayViewLayout(context)
-    private var _rowSize = 60
+    private var _rowSize = 160
 
     init {
         this.addView(
@@ -67,19 +69,22 @@ class DayView @JvmOverloads constructor(
             val em = k.get(Calendar.MINUTE)
 
             //get start position
-            val startPos = (sh * _rowSize + _rowSize / 60 * sm) + _rowSize/2
-            val endPos = (eh * _rowSize + _rowSize / 60 * em) + _rowSize/2
+            val startPos = (sh * _rowSize + _rowSize.toFloat() / 60 * sm) + _rowSize / 2
+            val endPos = (eh * _rowSize + _rowSize.toFloat() / 60 * em) + _rowSize / 2
 
             val height = endPos - startPos
 
-            val item = View(context)
+//            val item = View(context)
+//
 
-            this.addView(item, LayoutParams(LayoutParams.MATCH_PARENT,height).apply {
-                this.topMargin = startPos
-            })
+            val item = LayoutInflater.from(context).inflate(R.layout.day_view_event, null)
             drawedEvents.add(item)
+            this.addView(item, LayoutParams(LayoutParams.MATCH_PARENT, height.toInt()).apply {
+                this.topMargin = startPos.toInt()
+            })
 
-            item.setBackgroundColor(resources.getColor(R.color.roomOccupied))
+            item.event_card.setCardBackgroundColor(resources.getColor(R.color.roomOccupied))
+            item.event_text.text = it.toString()
         }
     }
 }
