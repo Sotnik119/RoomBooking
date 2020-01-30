@@ -6,6 +6,7 @@ import android.widget.LinearLayout
 import androidx.lifecycle.ViewModelProviders
 import com.donteco.roombooking.databinding.ActivityMainLandBinding
 import kotlinx.android.synthetic.main.activity_main_land.*
+import kotlinx.android.synthetic.main.dialog_events.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +23,14 @@ class MainActivity : AppCompatActivity() {
             1 -> LinearLayout.VERTICAL
             2 -> LinearLayout.HORIZONTAL
             else -> LinearLayout.VERTICAL
+        }
+
+        binding.roomStatus.btnCalendar.setOnClickListener {
+
+        }
+
+        binding.roomTime.btnBookRoom.setOnClickListener {
+
         }
 
     }

@@ -8,4 +8,6 @@
     <color name="roomOccupied">#EB1A1A</color>
     <color name="roomWait">#EBC81A</color>
     <color name="roomUnknow">#FFFFFF</color>
+
+    <color name="black_trans">#1F1E1E</color>
 </resources>
