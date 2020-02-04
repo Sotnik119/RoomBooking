@@ -7,13 +7,15 @@ class Event(
     val startDate: Date,
     val endDate: Date,
     val name: String,
-    val owner: String
+    val owner: String,
+    val description: String = ""
 ) {
-    val format = SimpleDateFormat("HH:mm", Locale.getDefault())
+    private val format24 = SimpleDateFormat("HH:mm", Locale.getDefault())
+    private val format12 = SimpleDateFormat("hh:mm a", Locale.getDefault())
 
     override fun toString(): String {
         return "$name\n" +
-                "${format.format(startDate)} - ${format.format(endDate)}\n" +
+                "${format24.format(startDate)} - ${format24.format(endDate)}\n" +
                 owner
     }
 
@@ -22,6 +24,13 @@ class Event(
     }
 
     fun getRemainedTime(): Int { //Todo
-        return (startDate.time - Date().time).toInt()/60000
+        return (startDate.time - Date().time).toInt() / 60000
+    }
+
+    fun getEventDescription(timeFormat: Format): String {
+        val format = if (timeFormat == Format.FORMAT_24H) format24 else format12
+        return "$name\n" +
+                "${startDate.toFormattedString(format)} - ${endDate.toFormattedString(format)}\n" +
+                owner
     }
 }

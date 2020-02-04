@@ -32,15 +32,19 @@ class DayView @JvmOverloads constructor(
     private val events = ArrayList<Event>()
     private val drawedEvents = ArrayList<View>()
 
+    var format: Format = Format.FORMAT_24H
+        set(value) {
+            dayViewLayout.setFormat(value)
+            field = value
+            drawEvents()
+        }
+
     fun setRowSize(value: Int) {
         dayViewLayout.setRowSize(value)
         _rowSize = value
         drawEvents()
     }
 
-    fun setFormat(format: DayViewLayout.Format) {
-        dayViewLayout.setFormat(format)
-    }
 
     fun setEvents(events: Array<Event>) {
         this.events.clear()
@@ -74,9 +78,6 @@ class DayView @JvmOverloads constructor(
 
             val height = endPos - startPos
 
-//            val item = View(context)
-//
-
             val item = LayoutInflater.from(context).inflate(R.layout.day_view_event, null)
             drawedEvents.add(item)
             this.addView(item, LayoutParams(LayoutParams.MATCH_PARENT, height.toInt()).apply {
@@ -84,7 +85,7 @@ class DayView @JvmOverloads constructor(
             })
 
             item.event_card.setCardBackgroundColor(resources.getColor(R.color.roomOccupied))
-            item.event_text.text = it.toString()
+            item.event_text.text = it.getEventDescription(format)
         }
     }
 }

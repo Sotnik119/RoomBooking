@@ -1,14 +1,13 @@
 package com.donteco.roombooking
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
-class MainViewModel : ViewModel() {
+
+class MainViewModel(repo: IEventsRepository) : ViewModel() {
 
     private val currentEvent: MutableLiveData<Event?> = MutableLiveData()
 
@@ -26,22 +25,37 @@ class MainViewModel : ViewModel() {
     val roomText: LiveData<String>
         get() = _roomText
 
-    private val repo: EventRepo = EventRepo()
+    val timeFormat = MutableLiveData<Format>().apply { postValue(Format.FORMAT_24H) }
 
-    private val eventList = repo.getEventsLive()
+    val filterDate = MutableLiveData<Date>().apply { postValue(Date()) }
+    val filteredEvents: LiveData<Array<Event>>
+        get() = Transformations.switchMap(filterDate) { date ->
+            Transformations.switchMap(eventList) {
+                val filtered = MutableLiveData<Array<Event>>()
+                filtered.postValue(it.filter {
+                    date.atStartOfDay().before(it.startDate) && date.atEndOfDay().after(
+                        it.endDate
+                    )
+                }
+                    .toTypedArray())
+                filtered
+            }
+        }
+
+    val eventList = repo.getEventsLive()
     private val repoObserver = Observer<Array<Event>> {
         setEvents(it)
     }
 
     init {
-        setstatus(Status.STATUS_UNKNOWN)
+        setStatus(Status.STATUS_UNKNOWN)
 
         eventList.observeForever(repoObserver)
 
         fixedRateTimer("Time", true, 2000, 5000) {
             _time.postValue(
                 SimpleDateFormat(
-                    "HH:mm",
+                    if (timeFormat.value == Format.FORMAT_24H) "HH:mm" else "hh:mm a",
                     Locale.getDefault()
                 ).format(Calendar.getInstance().time)
             )
@@ -55,16 +69,16 @@ class MainViewModel : ViewModel() {
         if (closest != null) {
             currentEvent.postValue(closest)
             if (closest.isEventTakesPlaceNow()) {
-                setstatus(Status.STATUS_OCCUPIED)
+                setStatus(Status.STATUS_OCCUPIED)
             } else {
                 if (closest.getRemainedTime() < 30) {
-                    setstatus(Status.STATUS_WAIT)
+                    setStatus(Status.STATUS_WAIT)
                 } else {
-                    setstatus(Status.STATUS_AVAILABLE)
+                    setStatus(Status.STATUS_AVAILABLE)
                 }
             }
         } else {
-            setstatus(Status.STATUS_AVAILABLE)
+            setStatus(Status.STATUS_AVAILABLE)
         }
 
 
@@ -73,7 +87,6 @@ class MainViewModel : ViewModel() {
     private var events = repo.getEvents()
 
     private fun setEvents(eventsq: Array<Event>) {
-        Log("Setting event list $eventsq")
         events = eventsq
         update()
     }
@@ -84,7 +97,7 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    private fun setstatus(newStatus: Status) {
+    private fun setStatus(newStatus: Status) {
         status.postValue(newStatus)
         _mainColor.postValue(
             when (newStatus) {
@@ -115,4 +128,12 @@ class MainViewModel : ViewModel() {
         STATUS_WAIT(3),
         STATUS_UNKNOWN(0)
     }
+}
+
+
+class MainViewModelFactory(private val repo: IEventsRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return MainViewModel(repo) as T
+    }
+
 }
