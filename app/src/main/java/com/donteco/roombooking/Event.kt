@@ -5,7 +5,7 @@ import java.util.*
 
 class Event(
     val startDate: Date,
-    val endDate: Date,
+    var endDate: Date,
     val name: String,
     val owner: String,
     val description: String = ""

@@ -50,10 +50,12 @@ class RoomBookingFragment : Fragment() {
         }
 
         binding.roomTime.btnBookRoom.setOnClickListener {
+            val mode =
+                if (viewModel.status.value == MainViewModel.Status.STATUS_AVAILABLE) BookingDialog.Mode.BOOK else BookingDialog.Mode.MANAGE
 
             activity!!.supportFragmentManager.beginTransaction().apply {
                 setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                replace(R.id.dialog_frame, BookingDialog.newInstance(BookingDialog.Mode.BOOK))
+                replace(R.id.dialog_frame, BookingDialog.newInstance(mode))
                 commit()
             }
             binding.dialog.visibility = View.VISIBLE

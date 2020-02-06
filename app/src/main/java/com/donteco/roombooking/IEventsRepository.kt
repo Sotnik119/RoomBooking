@@ -8,6 +8,7 @@ import java.util.*
 interface IEventsRepository {
     fun getEventsLive(): LiveData<Array<Event>>
     fun getEvents(): Array<Event>
-    fun addEvent():Boolean {return true}
-    fun updateEvent() {}
+    fun addEvent(event: Event):Boolean {return true}
+    fun updateEvent(event: Event):Boolean {return true}
+    fun update()
 }

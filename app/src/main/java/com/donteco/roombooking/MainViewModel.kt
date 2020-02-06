@@ -7,11 +7,13 @@ import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
 
-class MainViewModel(repo: IEventsRepository) : ViewModel() {
+class MainViewModel(private val repo: IEventsRepository) : ViewModel() {
 
     private val currentEvent: MutableLiveData<Event?> = MutableLiveData()
 
-    private val status: MutableLiveData<Status> = MutableLiveData()
+    private val _status: MutableLiveData<Status> = MutableLiveData()
+    val status: LiveData<Status>
+        get() = _status
 
     private val _mainColor: MutableLiveData<Int> = MutableLiveData()
     val mainColor: LiveData<Int>
@@ -24,6 +26,17 @@ class MainViewModel(repo: IEventsRepository) : ViewModel() {
     private val _roomText: MutableLiveData<String> = MutableLiveData()
     val roomText: LiveData<String>
         get() = _roomText
+
+
+    //fixme: Почему то не работает... пришлось забить в xml разметке
+    val bookButtonText: LiveData<String>
+        get() = Transformations.map(status) {
+                if (it == Status.STATUS_AVAILABLE) {
+                    "Бронировать"
+                } else {
+                    "Управление"
+                }
+        }
 
     val timeFormat = MutableLiveData<Format>().apply { postValue(Format.FORMAT_24H) }
 
@@ -98,7 +111,7 @@ class MainViewModel(repo: IEventsRepository) : ViewModel() {
     }
 
     private fun setStatus(newStatus: Status) {
-        status.postValue(newStatus)
+        _status.postValue(newStatus)
         _mainColor.postValue(
             when (newStatus) {
                 Status.STATUS_AVAILABLE -> R.color.roomAvailable
@@ -109,10 +122,10 @@ class MainViewModel(repo: IEventsRepository) : ViewModel() {
         )
         _roomText.postValue(
             when (newStatus) {
-                Status.STATUS_AVAILABLE -> "\nRoom available\n"
+                Status.STATUS_AVAILABLE -> "\nДоступно\n"
                 Status.STATUS_OCCUPIED -> currentEvent.value?.toString()
-                Status.STATUS_WAIT -> "Available for ${currentEvent.value?.getRemainedTime()} min"
-                else -> "\nUnknown\n"
+                Status.STATUS_WAIT -> "Доступно на ${currentEvent.value?.getRemainedTime()} минут"
+                else -> "\nНет связи с сервером\n"
             }
         )
     }
@@ -120,6 +133,41 @@ class MainViewModel(repo: IEventsRepository) : ViewModel() {
     override fun onCleared() {
         eventList.removeObserver(repoObserver)
         super.onCleared()
+    }
+
+
+    fun createEvent(length: Int) {
+        val timeEnd = Calendar.getInstance().apply { add(Calendar.MINUTE, length) }
+        val event = Event(Date(), timeEnd.time, "Прямое бронирование", "")
+        if (repo.addEvent(event)) {
+            repo.update()
+        } else {
+            //todo: show error?
+        }
+    }
+
+    fun closeEvent() {
+        val event = currentEvent.value?.apply { endDate = Date() }
+        event?.also {
+            if (repo.updateEvent(event)) {
+                repo.update()
+            }
+        }
+
+    }
+
+    fun extendEvent(length: Int) {
+        val event = currentEvent.value?.apply {
+            val timeEnd = Calendar.getInstance()
+            timeEnd.time = this.endDate
+            timeEnd.add(Calendar.MINUTE, length)
+            endDate = timeEnd.time
+        }
+        event?.also {
+            if (repo.updateEvent(event)) {
+                repo.update()
+            }
+        }
     }
 
     enum class Status(val num: Int) {

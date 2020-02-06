@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="com.donteco.roombooking.MainViewModel" />
+
         <variable
             name="viewModel"
             type="com.donteco.roombooking.MainViewModel" />
@@ -76,12 +78,13 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="4"
-                android:text="Book room"
+                android:text='@{viewModel.bookButtonText}'
                 android:textAllCaps="false"
                 app:autoSizeTextType="uniform"
+                android:maxLines="1"
                 app:color="@{viewModel.mainColor}" />
         </LinearLayout>
-
+<!--        android:text='@{viewModel.status == MainViewModel.Status.STATUS_AVAILABLE ? "Бронировать" : "Управление"}'-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -4,12 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import java.text.SimpleDateFormat
 
-class FakeEventRepository:IEventsRepository {
+class FakeEventRepository : IEventsRepository {
+
 
     val rep: MutableLiveData<Array<Event>> = MutableLiveData()
 
     val format = SimpleDateFormat("yyyy, MM, dd, HH, mm")
-    private val evens = arrayOf(
+    private val evens = arrayListOf(
         Event(
             format.parse("2020, 01, 29, 11, 40"),
             format.parse("2020, 01, 29, 13, 00"),
@@ -38,7 +39,7 @@ class FakeEventRepository:IEventsRepository {
 
     init {
         rep.postValue(
-            evens
+            evens.toTypedArray()
         )
     }
 
@@ -47,7 +48,21 @@ class FakeEventRepository:IEventsRepository {
     }
 
     override fun getEvents(): Array<Event> {
-        return evens
+        return evens.toTypedArray()
     }
 
+    override fun addEvent(event: Event): Boolean {
+        evens.add(event)
+        return true
+    }
+
+    override fun updateEvent(event: Event): Boolean {
+        return true
+    }
+
+    override fun update() {
+        rep.postValue(
+            evens.toTypedArray()
+        )
+    }
 }
