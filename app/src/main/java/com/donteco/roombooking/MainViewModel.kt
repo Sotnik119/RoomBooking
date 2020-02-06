@@ -31,11 +31,11 @@ class MainViewModel(private val repo: IEventsRepository) : ViewModel() {
     //fixme: Почему то не работает... пришлось забить в xml разметке
     val bookButtonText: LiveData<String>
         get() = Transformations.map(status) {
-                if (it == Status.STATUS_AVAILABLE) {
-                    "Бронировать"
-                } else {
-                    "Управление"
-                }
+            if (it == Status.STATUS_AVAILABLE) {
+                "Бронировать"
+            } else {
+                "Управление"
+            }
         }
 
     val timeFormat = MutableLiveData<Format>().apply { postValue(Format.FORMAT_24H) }
@@ -137,8 +137,15 @@ class MainViewModel(private val repo: IEventsRepository) : ViewModel() {
 
 
     fun createEvent(length: Int) {
-        val timeEnd = Calendar.getInstance().apply { add(Calendar.MINUTE, length) }
-        val event = Event(Date(), timeEnd.time, "Прямое бронирование", "")
+        createEvent(Date(), length, "Прямое бронирование")
+    }
+
+    fun createEvent(date: Date, length: Int, name: String = "Раннее бронирование") {
+        val timeEnd = Calendar.getInstance().apply {
+            time = date
+            add(Calendar.MINUTE, length)
+        }
+        val event = Event(date, timeEnd.time, name, "")
         if (repo.addEvent(event)) {
             repo.update()
         } else {

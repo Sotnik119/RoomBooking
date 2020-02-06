@@ -10,59 +10,100 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProviders
 import com.donteco.roombooking.databinding.ActivityMainLandBinding
 
-class RoomBookingFragment : Fragment() {
+class RoomBookingFragment : Fragment(), IClosable {
+
+
     companion object {
-        fun newInstance() = RoomBookingFragment()
+        fun newInstance(orientation: Orientation, timeFormat: Format, customDialogs: Boolean) =
+            RoomBookingFragment().apply {
+                this.orientation = orientation
+                this.useCustomDialogs = customDialogs
+                this.timeFormat = timeFormat
+            }
     }
 
+    var orientation = Orientation.HORIZONTAL
+    var useCustomDialogs = true
+    var timeFormat = Format.FORMAT_24H
+
+    lateinit var binding: ActivityMainLandBinding
+    var currentDialogFragment: Fragment? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        val binding = ActivityMainLandBinding.inflate(layoutInflater)
+        binding = ActivityMainLandBinding.inflate(layoutInflater)
         val repo = FakeEventRepository()
         val viewModel = ViewModelProviders.of(activity!!, MainViewModelFactory(repo))
             .get(MainViewModel::class.java)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
-        binding.mainFrame.orientation = when (resources.configuration.orientation) {
-            1 -> LinearLayout.VERTICAL
-            2 -> LinearLayout.HORIZONTAL
-            else -> LinearLayout.VERTICAL
+        viewModel.timeFormat.postValue(timeFormat)
+
+        binding.mainFrame.orientation = when (orientation) {
+            Orientation.VERTICAL -> LinearLayout.VERTICAL
+            Orientation.HORIZONTAL -> LinearLayout.HORIZONTAL
         }
 
         binding.dialog.setOnTouchListener { _, _ ->
-            binding.dialog.visibility = View.GONE
+            close()
             false
         }
 
         binding.roomStatus.btnCalendar.setOnClickListener {
-            activity!!.supportFragmentManager.beginTransaction().apply {
-                setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                replace(R.id.dialog_frame, DayViewDialog.newInstance(150))
-                commit()
+            val dialog = DayViewDialog.newInstance(150)
+            if (useCustomDialogs) {
+                currentDialogFragment = dialog
+                activity!!.supportFragmentManager.beginTransaction().apply {
+                    setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    replace(R.id.dialog_frame, currentDialogFragment!!)
+                    commit()
+                }
+                binding.dialog.visibility = View.VISIBLE
+            } else {
+                dialog.show(activity!!.supportFragmentManager, "DayViewDialog")
             }
-            binding.dialog.visibility = View.VISIBLE
-            // DayViewDialog.newInstance(150).show(activity!!.supportFragmentManager, "DayViewDialog")
         }
+
 
         binding.roomTime.btnBookRoom.setOnClickListener {
             val mode =
                 if (viewModel.status.value == MainViewModel.Status.STATUS_AVAILABLE) BookingDialog.Mode.BOOK else BookingDialog.Mode.MANAGE
 
+            val dialog = BookingDialog.newInstance(mode, this)
+            if (useCustomDialogs) {
+                currentDialogFragment = dialog
+                activity!!.supportFragmentManager.beginTransaction().apply {
+                    setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    replace(R.id.dialog_frame, currentDialogFragment!!)
+                    commit()
+                }
+                binding.dialog.visibility = View.VISIBLE
+            } else {
+                dialog.show(activity!!.supportFragmentManager, "BookDialog")
+            }
+        }
+        return binding.root
+    }
+
+    /**
+     * Close dialog
+     */
+    override fun close() {
+        binding.dialog.visibility = View.GONE
+        if (currentDialogFragment != null) {
             activity!!.supportFragmentManager.beginTransaction().apply {
-                setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                replace(R.id.dialog_frame, BookingDialog.newInstance(mode))
+                remove(currentDialogFragment!!)
                 commit()
             }
-            binding.dialog.visibility = View.VISIBLE
-
-//            BookingDialog.newInstance(BookingDialog.Mode.BOOK).show(activity!!.supportFragmentManager, "BookDialog")
         }
+    }
 
-        return binding.root
+    enum class Orientation {
+        VERTICAL,
+        HORIZONTAL
     }
 }
