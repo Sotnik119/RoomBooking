@@ -56,13 +56,13 @@ class RoomBookingFragment : Fragment(), IClosable {
         binding.roomStatus.btnCalendar.setOnClickListener {
             val dialog = DayViewDialog.newInstance(150)
             if (useCustomDialogs) {
+                binding.dialog.visibility = View.VISIBLE
                 currentDialogFragment = dialog
                 activity!!.supportFragmentManager.beginTransaction().apply {
                     setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     replace(R.id.dialog_frame, currentDialogFragment!!)
                     commit()
                 }
-                binding.dialog.visibility = View.VISIBLE
             } else {
                 dialog.show(activity!!.supportFragmentManager, "DayViewDialog")
             }
@@ -75,13 +75,13 @@ class RoomBookingFragment : Fragment(), IClosable {
 
             val dialog = BookingDialog.newInstance(mode, this)
             if (useCustomDialogs) {
+                binding.dialog.visibility = View.VISIBLE
                 currentDialogFragment = dialog
                 activity!!.supportFragmentManager.beginTransaction().apply {
                     setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     replace(R.id.dialog_frame, currentDialogFragment!!)
                     commit()
                 }
-                binding.dialog.visibility = View.VISIBLE
             } else {
                 dialog.show(activity!!.supportFragmentManager, "BookDialog")
             }

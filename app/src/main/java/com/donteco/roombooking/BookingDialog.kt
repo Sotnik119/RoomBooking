@@ -116,12 +116,14 @@ class BookingDialog : DialogFragment() {
         }
 
         layout.chooserMinute.apply {
-            minValue = 0
-            maxValue = 59
+            val names = arrayOf("00", "15", "30", "45")
+            minValue = 1
+            maxValue = 4
+            displayedValues = names
         }
 
         layout.chooserLength.apply {
-            val names = arrayOf("15 мин", "30 мин", "45 мин", "1 час")
+            val names = arrayOf("15 мин", "30 мин", "45 мин", "1 час ")
             minValue = 1
             maxValue = names.size
             displayedValues = names
@@ -134,7 +136,8 @@ class BookingDialog : DialogFragment() {
             val calendar = Calendar.getInstance().apply {
                 time = day
                 set(Calendar.HOUR_OF_DAY, layout.chooserHour.value)
-                set(Calendar.MINUTE, layout.chooserMinute.value)
+                set(Calendar.MINUTE, layout.chooserMinute.value*15)
+                set(Calendar.SECOND, 0)
                 set(Calendar.MILLISECOND, 0)
             }
             val date = calendar.time

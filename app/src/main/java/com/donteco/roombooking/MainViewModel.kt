@@ -145,7 +145,12 @@ class MainViewModel(private val repo: IEventsRepository) : ViewModel() {
             time = date
             add(Calendar.MINUTE, length)
         }
-        val event = Event(date, timeEnd.time, name, "")
+        val timeStart = Calendar.getInstance().apply {
+            time = date
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val event = Event(timeStart.time, timeEnd.time, name, "")
         if (repo.addEvent(event)) {
             repo.update()
         } else {
