@@ -52,17 +52,46 @@ class FakeEventRepository : IEventsRepository {
     }
 
     override fun addEvent(event: Event): Boolean {
-        evens.add(event)
-        return true
+        return if (canAddEvent(event)) {
+            evens.add(event)
+            update()
+            true
+        } else {
+            false
+        }
     }
 
     override fun updateEvent(event: Event): Boolean {
-        return true
+        return if (canUpdateEvent(event)) {
+            evens.remove(evens.find { it.id == event.id })
+            evens.add(event)
+            update()
+            true
+        } else
+            false
     }
 
+    //fixme: update with copy
     override fun update() {
         rep.postValue(
             evens.toTypedArray()
         )
+    }
+
+    private fun canAddEvent(event: Event): Boolean {
+        val daylyEvents =
+            evens.filter { it.startDate.atStartOfDay().time == event.startDate.atStartOfDay().time }
+
+        val crossed = daylyEvents.firstOrNull { event.crossAnotherEvent(it) }
+
+        return crossed == null
+    }
+
+    private fun canUpdateEvent(event: Event): Boolean {
+        val filtered = evens.filter { it.id != event.id }
+
+        val crossed = filtered.firstOrNull { event.crossAnotherEvent(it) }
+
+        return crossed == null
     }
 }

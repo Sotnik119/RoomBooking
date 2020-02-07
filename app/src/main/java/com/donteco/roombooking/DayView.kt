@@ -19,6 +19,11 @@ class DayView @JvmOverloads constructor(
     FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
     private val dayViewLayout = DayViewLayout(context)
     private var _rowSize = 160
+    private val events = ArrayList<Event>()
+    private val drawedEvents = ArrayList<View>()
+    private val currentTimeLine = View(context).apply {
+        setBackgroundColor(resources.getColor(R.color.roomOccupied))
+    }
 
     init {
         this.addView(
@@ -26,11 +31,7 @@ class DayView @JvmOverloads constructor(
             ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         )
         dayViewLayout.setRowSize(_rowSize)
-
     }
-
-    private val events = ArrayList<Event>()
-    private val drawedEvents = ArrayList<View>()
 
     var format: Format = Format.FORMAT_24H
         set(value) {
@@ -86,6 +87,26 @@ class DayView @JvmOverloads constructor(
 
             item.event_card.setCardBackgroundColor(resources.getColor(R.color.roomOccupied))
             item.event_text.text = it.getEventDescription(format)
+        }
+    }
+
+    fun drawCurrentTimeLine() {
+        removeCurrentTimeLine()
+        val calendar = Calendar.getInstance()
+        val h = calendar.get(Calendar.HOUR_OF_DAY)
+        val m = calendar.get(Calendar.MINUTE)
+        val topMargin = (h * _rowSize + _rowSize.toFloat() / 60 * m) + _rowSize / 2
+
+        this.addView(currentTimeLine, LayoutParams(LayoutParams.MATCH_PARENT, 3).apply {
+            this.topMargin = topMargin.toInt()
+        })
+    }
+
+    fun removeCurrentTimeLine() {
+        try {
+            this.removeView(currentTimeLine)
+        } catch (e: Exception) {
+            android.util.Log.d("DayView", "CurrentTimeLine doesn't have parent")
         }
     }
 }

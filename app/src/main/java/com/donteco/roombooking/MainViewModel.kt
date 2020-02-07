@@ -28,7 +28,6 @@ class MainViewModel(private val repo: IEventsRepository) : ViewModel() {
         get() = _roomText
 
 
-    //fixme: Почему то не работает... пришлось забить в xml разметке
     val bookButtonText: LiveData<String>
         get() = Transformations.map(status) {
             if (it == Status.STATUS_AVAILABLE) {
@@ -40,7 +39,7 @@ class MainViewModel(private val repo: IEventsRepository) : ViewModel() {
 
     val timeFormat = MutableLiveData<Format>().apply { postValue(Format.FORMAT_24H) }
 
-    val filterDate = MutableLiveData<Date>().apply { postValue(Date()) }
+    val filterDate = MutableLiveData<Date>().apply { postValue(Date().atStartOfDay()) }
     val filteredEvents: LiveData<Array<Event>>
         get() = Transformations.switchMap(filterDate) { date ->
             Transformations.switchMap(eventList) {
@@ -105,7 +104,7 @@ class MainViewModel(private val repo: IEventsRepository) : ViewModel() {
     }
 
     private fun findClosestEvent(): Event? {
-        return events.firstOrNull {
+        return events.sortedBy { it.startDate }.firstOrNull {
             (Date().after(it.startDate) && Date().before(it.endDate)) || it.startDate.after(Date())
         }
     }
@@ -152,7 +151,7 @@ class MainViewModel(private val repo: IEventsRepository) : ViewModel() {
         }
         val event = Event(timeStart.time, timeEnd.time, name, "")
         if (repo.addEvent(event)) {
-            repo.update()
+            //todo: show success
         } else {
             //todo: show error?
         }
@@ -162,14 +161,15 @@ class MainViewModel(private val repo: IEventsRepository) : ViewModel() {
         val event = currentEvent.value?.apply { endDate = Date() }
         event?.also {
             if (repo.updateEvent(event)) {
-                repo.update()
+
             }
         }
 
     }
 
     fun extendEvent(length: Int) {
-        val event = currentEvent.value?.apply {
+        val event = currentEvent.value
+        event?.apply {
             val timeEnd = Calendar.getInstance()
             timeEnd.time = this.endDate
             timeEnd.add(Calendar.MINUTE, length)
@@ -177,7 +177,7 @@ class MainViewModel(private val repo: IEventsRepository) : ViewModel() {
         }
         event?.also {
             if (repo.updateEvent(event)) {
-                repo.update()
+
             }
         }
     }

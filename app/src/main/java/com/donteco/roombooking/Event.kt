@@ -8,7 +8,8 @@ class Event(
     var endDate: Date,
     val name: String,
     val owner: String,
-    val description: String = ""
+    val description: String = "",
+    val id: String = UUID.randomUUID().toString()
 ) {
     private val format24 = SimpleDateFormat("HH:mm", Locale.getDefault())
     private val format12 = SimpleDateFormat("hh:mm a", Locale.getDefault())
@@ -32,5 +33,15 @@ class Event(
         return "$name\n" +
                 "${startDate.toFormattedString(format)} - ${endDate.toFormattedString(format)}\n" +
                 owner
+    }
+
+    fun crossAnotherEvent(other: Event): Boolean {
+
+        val o1 = this.endDate.after(other.startDate) && this.endDate.before(other.endDate)
+        val o2 = this.startDate.after(other.startDate) && this.startDate.before(other.endDate)
+        val o3 = this.startDate.before(other.startDate) && this.endDate.after(other.endDate)
+        val o4 = this.startDate.after(other.startDate) && this.endDate.before(other.endDate)
+
+        return o1 || o2 || o3 || o4
     }
 }

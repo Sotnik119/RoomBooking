@@ -91,7 +91,7 @@ class BookingDialog : DialogFragment() {
             setOnClickListener { bookNow(30) }
         }
         buttonLayout.button3.apply {
-            text = " 1 час"
+            text = " 1 час "
             setOnClickListener { bookNow(60) }
         }
     }
@@ -113,6 +113,7 @@ class BookingDialog : DialogFragment() {
             minValue = 0
             maxValue = 23
             displayedValues = names.toTypedArray()
+            value = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1
         }
 
         layout.chooserMinute.apply {
@@ -123,7 +124,7 @@ class BookingDialog : DialogFragment() {
         }
 
         layout.chooserLength.apply {
-            val names = arrayOf("15 мин", "30 мин", "45 мин", "1 час ")
+            val names = arrayOf("15 мин", "30 мин", "45 мин", "1 час")
             minValue = 1
             maxValue = names.size
             displayedValues = names
@@ -136,14 +137,16 @@ class BookingDialog : DialogFragment() {
             val calendar = Calendar.getInstance().apply {
                 time = day
                 set(Calendar.HOUR_OF_DAY, layout.chooserHour.value)
-                set(Calendar.MINUTE, layout.chooserMinute.value*15)
+                set(Calendar.MINUTE, layout.chooserMinute.value * 15)
                 set(Calendar.SECOND, 0)
                 set(Calendar.MILLISECOND, 0)
             }
             val date = calendar.time
-
             val length = layout.chooserLength.value * 15
-            bookLater(date, length, "Раннее бронирование")
+            val name =
+                if (layout.eventName.text.toString().isEmpty()) "Раннее бронировани" else layout.eventName.text.toString()
+
+            bookLater(date, length, name)
         }
     }
 

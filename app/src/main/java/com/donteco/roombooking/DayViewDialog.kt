@@ -44,6 +44,7 @@ class DayViewDialog : DialogFragment() {
         viewModel.filterDate.observe(this, Observer {
             binding.dateText.text =
                 it.toFormattedString(SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()))
+            if (it.atStartOfDay().time ==  Date().atStartOfDay().time) binding.dayView.drawCurrentTimeLine() else binding.dayView.removeCurrentTimeLine()
         })
 
         viewModel.filteredEvents.observe(this, Observer {
@@ -53,7 +54,8 @@ class DayViewDialog : DialogFragment() {
         binding.prevDay.setOnClickListener {
             val date = viewModel.filterDate.value!!
             val c = Calendar.getInstance().apply { time = date; add(Calendar.DAY_OF_MONTH, -1) }
-            viewModel.filterDate.postValue(c.time)
+            if (!c.time.before(Date().atStartOfDay()))
+                viewModel.filterDate.postValue(c.time)
         }
 
         binding.nextDay.setOnClickListener {

@@ -71,7 +71,7 @@ class RoomBookingFragment : Fragment(), IClosable {
 
         binding.roomTime.btnBookRoom.setOnClickListener {
             val mode =
-                if (viewModel.status.value == MainViewModel.Status.STATUS_AVAILABLE) BookingDialog.Mode.BOOK else BookingDialog.Mode.MANAGE
+                if (viewModel.status.value == MainViewModel.Status.STATUS_OCCUPIED) BookingDialog.Mode.MANAGE else BookingDialog.Mode.BOOK
 
             val dialog = BookingDialog.newInstance(mode, this)
             if (useCustomDialogs) {
