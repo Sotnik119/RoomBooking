@@ -60,30 +60,38 @@
             app:layout_constraintTop_toTopOf="@+id/guideline6"
             tools:text="16:20" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_marginBottom="32dp"-->
+<!--            android:layout_weight="1.5"-->
+<!--            android:gravity="center"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:weightSum="10"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/guideline8">-->
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_book_room"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="32dp"
-            android:layout_weight="1.5"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="10"
+            android:layout_weight="4"
+            android:maxLines="1"
+            android:text='@{viewModel.bookButtonText}'
+            android:textAllCaps="false"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="1sp"
+            app:color="@{viewModel.mainColor}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.15"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline8">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_book_room"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:text='@{viewModel.bookButtonText}'
-                android:textAllCaps="false"
-                app:autoSizeTextType="uniform"
-                android:maxLines="1"
-                app:color="@{viewModel.mainColor}" />
-        </LinearLayout>
+            app:layout_constraintTop_toTopOf="@+id/guideline8"
+            app:layout_constraintVertical_bias="0.100000024"
+            app:layout_constraintWidth_percent="0.5" />
+<!--        </LinearLayout>-->
 <!--        android:text='@{viewModel.status == MainViewModel.Status.STATUS_AVAILABLE ? "Бронировать" : "Управление"}'-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,17 +14,24 @@ class RoomBookingFragment : Fragment(), IClosable {
 
 
     companion object {
-        fun newInstance(orientation: Orientation, timeFormat: Format, customDialogs: Boolean) =
+        fun newInstance(
+            orientation: Orientation,
+            timeFormat: Format,
+            customDialogs: Boolean,
+            repository: IEventsRepository?
+        ) =
             RoomBookingFragment().apply {
                 this.orientation = orientation
                 this.useCustomDialogs = customDialogs
                 this.timeFormat = timeFormat
+                this.repo = repository ?: FakeEventRepository()
             }
     }
 
     var orientation = Orientation.HORIZONTAL
     var useCustomDialogs = true
     var timeFormat = Format.FORMAT_24H
+    lateinit var repo: IEventsRepository
 
     lateinit var binding: ActivityMainLandBinding
     var currentDialogFragment: Fragment? = null
@@ -35,7 +42,7 @@ class RoomBookingFragment : Fragment(), IClosable {
     ): View? {
 
         binding = ActivityMainLandBinding.inflate(layoutInflater)
-        val repo = FakeEventRepository()
+
         val viewModel = ViewModelProviders.of(activity!!, MainViewModelFactory(repo))
             .get(MainViewModel::class.java)
         binding.lifecycleOwner = this
@@ -54,7 +61,7 @@ class RoomBookingFragment : Fragment(), IClosable {
         }
 
         binding.roomStatus.btnCalendar.setOnClickListener {
-            val dialog = DayViewDialog.newInstance(150)
+            val dialog = DayViewDialog.newInstance(binding.root.measuredHeight/8)
             if (useCustomDialogs) {
                 binding.dialog.visibility = View.VISIBLE
                 currentDialogFragment = dialog

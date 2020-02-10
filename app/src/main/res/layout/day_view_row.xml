@@ -31,6 +31,7 @@
                 android:gravity="center"
                 app:autoSizeMinTextSize="1sp"
                 app:autoSizeTextType="uniform"
+                android:maxLines="1"
                 tools:text="12 AM" />
         </LinearLayout>
 

@@ -22,7 +22,8 @@ class MainActivity : AppCompatActivity() {
             2 -> RoomBookingFragment.Orientation.HORIZONTAL
             else -> RoomBookingFragment.Orientation.HORIZONTAL
         }
-        val roomFragment = RoomBookingFragment.newInstance(orientation, Format.FORMAT_24H, true)
+        val roomFragment =
+            RoomBookingFragment.newInstance(orientation, Format.FORMAT_24H, true, null)
 
         supportFragmentManager.beginTransaction().add(R.id.container, roomFragment, "room").commit()
     }
