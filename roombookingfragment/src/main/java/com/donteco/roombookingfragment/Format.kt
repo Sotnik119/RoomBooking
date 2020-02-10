@@ -1,4 +1,4 @@
-package com.donteco.roombooking
+package com.donteco.roombookingfragment
 
 enum class Format {
     FORMAT_24H,

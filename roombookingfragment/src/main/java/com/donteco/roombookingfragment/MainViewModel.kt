@@ -1,4 +1,4 @@
-package com.donteco.roombooking
+package com.donteco.roombookingfragment
 
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
@@ -193,7 +193,9 @@ class MainViewModel(private val repo: IEventsRepository) : ViewModel() {
 
 class MainViewModelFactory(private val repo: IEventsRepository?) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return MainViewModel(repo?: FakeEventRepository()) as T
+        return MainViewModel(
+            repo ?: FakeEventRepository()
+        ) as T
     }
 
 }

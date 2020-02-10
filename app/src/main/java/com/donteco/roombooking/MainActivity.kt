@@ -4,6 +4,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import com.donteco.roombookingfragment.Format
+import com.donteco.roombookingfragment.MainViewModel
+import com.donteco.roombookingfragment.MainViewModelFactory
+import com.donteco.roombookingfragment.RoomBookingFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,7 +24,9 @@ class MainActivity : AppCompatActivity() {
             else -> RoomBookingFragment.Orientation.HORIZONTAL
         }
         val model =
-            ViewModelProviders.of(this, MainViewModelFactory(null)).get(MainViewModel::class.java)
+            ViewModelProviders.of(this, MainViewModelFactory(null)).get(
+                MainViewModel::class.java
+            )
 
         frag = RoomBookingFragment.newInstance(orientation, Format.FORMAT_24H, true)
 

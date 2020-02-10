@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.donteco.roombooking.MainViewModel" />
+            type="com.donteco.roombookingfragment.MainViewModel" />
     </data>
 
     <RelativeLayout
@@ -78,7 +78,6 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:maxLines="1"
-                    android:text="TextView"
                     android:textAlignment="center"
                     app:autoSizeMinTextSize="1sp"
                     app:autoSizeTextType="uniform"
@@ -87,7 +86,8 @@
                     app:layout_constraintHeight_percent="0.8"
                     app:layout_constraintStart_toStartOf="@+id/guideline10"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_percent="0.5" />
+                    app:layout_constraintWidth_percent="0.5"
+                    tools:text="21.01.2020" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <ScrollView
@@ -96,7 +96,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/guideline9">
 
-                <com.donteco.roombooking.DayView
+                <com.donteco.roombookingfragment.DayView
                     android:id="@+id/day_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />

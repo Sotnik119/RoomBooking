@@ -1,4 +1,4 @@
-package com.donteco.roombooking
+package com.donteco.roombookingfragment
 
 import java.text.SimpleDateFormat
 import java.util.*
@@ -25,4 +25,8 @@ fun Date.atStartOfDay(): Date {
     calendar.set(Calendar.SECOND, 0)
     calendar.set(Calendar.MILLISECOND, 0)
     return calendar.time
+}
+
+fun Log(mes: String) {
+    android.util.Log.d("MyLog", mes)
 }

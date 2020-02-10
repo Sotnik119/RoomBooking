@@ -1,4 +1,4 @@
-package com.donteco.roombooking
+package com.donteco.roombookingfragment
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

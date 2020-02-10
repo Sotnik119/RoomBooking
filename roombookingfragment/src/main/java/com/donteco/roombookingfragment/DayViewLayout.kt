@@ -1,4 +1,4 @@
-package com.donteco.roombooking
+package com.donteco.roombookingfragment
 
 import android.content.Context
 import android.util.AttributeSet
@@ -43,7 +43,12 @@ class DayViewLayout @JvmOverloads constructor(context: Context?, attrs: Attribut
         for (i in 0..24) {
             val row = LayoutInflater.from(context).inflate(R.layout.day_view_row, null)
             row.minimumHeight = rowSize
-            row.time_text.text = getTextForHour(i, format, false)
+            row.time_text.text =
+                getTextForHour(
+                    i,
+                    format,
+                    false
+                )
             this.addView(row, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, rowSize))
         }
     }

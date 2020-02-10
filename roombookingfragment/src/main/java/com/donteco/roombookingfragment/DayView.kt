@@ -1,4 +1,4 @@
-package com.donteco.roombooking
+package com.donteco.roombookingfragment
 
 import android.content.Context
 import android.util.AttributeSet
@@ -13,10 +13,9 @@ import kotlin.collections.ArrayList
 class DayView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-    defStyleRes: Int = 0
+    defStyleAttr: Int = 0
 ) :
-    FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
+    FrameLayout(context, attrs, defStyleAttr) {
     private val dayViewLayout = DayViewLayout(context)
     private var _rowSize = 160
     private val events = ArrayList<Event>()
@@ -33,7 +32,8 @@ class DayView @JvmOverloads constructor(
         dayViewLayout.setRowSize(_rowSize)
     }
 
-    var format: Format = Format.FORMAT_24H
+    var format: Format =
+        Format.FORMAT_24H
         set(value) {
             dayViewLayout.setFormat(value)
             field = value

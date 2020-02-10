@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':roombookingfragment'
 rootProject.name='Room booking'

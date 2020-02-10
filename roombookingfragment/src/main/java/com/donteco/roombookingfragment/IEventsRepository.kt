@@ -1,9 +1,6 @@
-package com.donteco.roombooking
+package com.donteco.roombookingfragment
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import java.text.SimpleDateFormat
-import java.util.*
 
 interface IEventsRepository {
     fun getEventsLive(): LiveData<Array<Event>>

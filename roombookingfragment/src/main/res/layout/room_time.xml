@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="com.donteco.roombooking.MainViewModel" />
+        <import type="com.donteco.roombookingfragment.MainViewModel" />
 
         <variable
             name="viewModel"
-            type="com.donteco.roombooking.MainViewModel" />
+            type="com.donteco.roombookingfragment.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

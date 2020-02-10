@@ -1,4 +1,4 @@
-package com.donteco.roombooking
+package com.donteco.roombookingfragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.donteco.roombooking.databinding.DialogEventsBinding
+import com.donteco.roombookingfragment.databinding.DialogEventsBinding
 import java.text.SimpleDateFormat
 import java.util.*
 

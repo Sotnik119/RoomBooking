@@ -7,13 +7,12 @@
 
         <variable
             name="viewModel"
-            type="com.donteco.roombooking.MainViewModel" />
+            type="com.donteco.roombookingfragment.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/main_gradient">
+        android:layout_height="match_parent">
 
         <FrameLayout
             android:id="@+id/fragment_day"
