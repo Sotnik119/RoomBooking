@@ -1,16 +1,13 @@
 package com.donteco.roombooking
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.FrameLayout
-import android.widget.LinearLayout
-import androidx.fragment.app.FragmentTransaction
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
-import com.donteco.roombooking.databinding.ActivityMainLandBinding
-import kotlinx.android.synthetic.main.activity_main_land.*
-import kotlinx.android.synthetic.main.dialog_events.*
 
 class MainActivity : AppCompatActivity() {
+
+    var frag: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,9 +19,16 @@ class MainActivity : AppCompatActivity() {
             2 -> RoomBookingFragment.Orientation.HORIZONTAL
             else -> RoomBookingFragment.Orientation.HORIZONTAL
         }
-        val roomFragment =
-            RoomBookingFragment.newInstance(orientation, Format.FORMAT_24H, true, null)
+        val model =
+            ViewModelProviders.of(this, MainViewModelFactory(null)).get(MainViewModel::class.java)
 
-        supportFragmentManager.beginTransaction().add(R.id.container, roomFragment, "room").commit()
+        frag = RoomBookingFragment.newInstance(orientation, Format.FORMAT_24H, true)
+
+        supportFragmentManager.beginTransaction().replace(R.id.container, frag!!, "room").commit()
     }
+
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        supportFragmentManager.beginTransaction().remove(frag!!).commit()
+//    }
 }

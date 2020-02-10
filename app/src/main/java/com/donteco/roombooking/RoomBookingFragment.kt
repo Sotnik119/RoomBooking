@@ -13,25 +13,23 @@ import com.donteco.roombooking.databinding.ActivityMainLandBinding
 class RoomBookingFragment : Fragment(), IClosable {
 
 
+    var orientation = Orientation.HORIZONTAL
+    var useCustomDialogs = true
+    var timeFormat = Format.FORMAT_24H
+
     companion object {
         fun newInstance(
             orientation: Orientation,
             timeFormat: Format,
-            customDialogs: Boolean,
-            repository: IEventsRepository?
+            customDialogs: Boolean
         ) =
             RoomBookingFragment().apply {
                 this.orientation = orientation
                 this.useCustomDialogs = customDialogs
                 this.timeFormat = timeFormat
-                this.repo = repository ?: FakeEventRepository()
             }
     }
 
-    var orientation = Orientation.HORIZONTAL
-    var useCustomDialogs = true
-    var timeFormat = Format.FORMAT_24H
-    lateinit var repo: IEventsRepository
 
     lateinit var binding: ActivityMainLandBinding
     var currentDialogFragment: Fragment? = null
@@ -43,8 +41,8 @@ class RoomBookingFragment : Fragment(), IClosable {
 
         binding = ActivityMainLandBinding.inflate(layoutInflater)
 
-        val viewModel = ViewModelProviders.of(activity!!, MainViewModelFactory(repo))
-            .get(MainViewModel::class.java)
+        val viewModel =  ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
+//            ViewModelProviders.of(activity!!, MainViewModelFactory(repo)).get(MainViewModel::class.java)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
