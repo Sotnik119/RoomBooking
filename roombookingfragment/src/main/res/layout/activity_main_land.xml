@@ -19,12 +19,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <FrameLayout
-            android:id="@+id/status_indicator"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0.5"
-            app:color="@{viewModel.mainColor}" />
+<!--        <FrameLayout-->
+<!--            android:id="@+id/status_indicator"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:alpha="0.5"-->
+<!--            app:color="@{viewModel.mainColor}" />-->
 
         <LinearLayout
             android:id="@+id/main_frame"

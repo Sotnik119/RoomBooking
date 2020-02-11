@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
             else -> RoomBookingFragment.Orientation.HORIZONTAL
         }
         val model =
-            ViewModelProviders.of(this, MainViewModelFactory(null)).get(
+            ViewModelProviders.of(this, MainViewModelFactory(null, null)).get(
                 MainViewModel::class.java
             )
 

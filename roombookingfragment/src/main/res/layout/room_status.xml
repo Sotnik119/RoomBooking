@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.donteco.roombookingfragment.MainViewModel" />
@@ -13,7 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:weightSum="10">
+        android:weightSum="10"
+        app:color="@{viewModel.mainColorLeft}">
 
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -27,13 +29,13 @@
             android:text="@{viewModel.roomText}"
             android:textAlignment="center"
             android:textColor="#000000"
-            app:autoSizeTextType="uniform"
             app:autoSizeMinTextSize="1dp"
+            app:autoSizeTextType="uniform"
             app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline"
-            tools:text="@string/sample_text"/>
+            tools:text="@string/sample_text" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btn_calendar"
@@ -42,10 +44,10 @@
             android:layout_gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            app:layout_constraintHeight_percent="0.15"
             app:layout_constraintStart_toStartOf="@+id/guideline3"
             app:layout_constraintTop_toTopOf="@+id/guideline5"
             app:layout_constraintVertical_bias="0.100000024"
-            app:layout_constraintHeight_percent="0.15"
             app:srcCompat="@android:drawable/ic_menu_my_calendar" />
 
         <androidx.constraintlayout.widget.Guideline

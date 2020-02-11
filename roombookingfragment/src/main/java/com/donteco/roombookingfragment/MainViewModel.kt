@@ -1,5 +1,6 @@
 package com.donteco.roombookingfragment
 
+import android.graphics.Color
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import java.text.SimpleDateFormat
@@ -7,7 +8,10 @@ import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
 
-class MainViewModel(private val repo: IEventsRepository) : ViewModel() {
+class MainViewModel(
+    private val repo: IEventsRepository,
+    private val config: Config
+) : ViewModel() {
 
     private val currentEvent: MutableLiveData<Event?> = MutableLiveData()
 
@@ -18,6 +22,14 @@ class MainViewModel(private val repo: IEventsRepository) : ViewModel() {
     private val _mainColor: MutableLiveData<Int> = MutableLiveData()
     val mainColor: LiveData<Int>
         get() = _mainColor
+    val mainColorLeft: LiveData<Int>
+        get() = Transformations.map(_mainColor) {
+            it.setAlpha(config.leftTransparent)
+        }
+    val mainColorRight: LiveData<Int>
+        get() = Transformations.map(_mainColor) {
+            it.setAlpha(config.rightTransparent)
+        }
 
     private val _time: MutableLiveData<String> = MutableLiveData()
     val time: LiveData<String>
@@ -113,10 +125,10 @@ class MainViewModel(private val repo: IEventsRepository) : ViewModel() {
         _status.postValue(newStatus)
         _mainColor.postValue(
             when (newStatus) {
-                Status.STATUS_AVAILABLE -> R.color.roomAvailable
-                Status.STATUS_OCCUPIED -> R.color.roomOccupied
-                Status.STATUS_WAIT -> R.color.roomWait
-                else -> R.color.roomUnknow
+                Status.STATUS_AVAILABLE -> config.freeColor
+                Status.STATUS_OCCUPIED -> config.busyColor
+                Status.STATUS_WAIT -> config.willBusyColor
+                else -> config.connectError
             }
         )
         _roomText.postValue(
@@ -188,13 +200,37 @@ class MainViewModel(private val repo: IEventsRepository) : ViewModel() {
         STATUS_WAIT(3),
         STATUS_UNKNOWN(0)
     }
+
+    data class Config(
+        val freeColor: Int,
+        val busyColor: Int,
+        val willBusyColor: Int,
+        val connectError: Int,
+        val leftTransparent: Int,
+        val rightTransparent: Int
+    ) {
+        companion object {
+            fun getDefault() = Config(
+                Color.GREEN,
+                Color.RED,
+                Color.YELLOW,
+                Color.BLUE,
+                40,
+                60
+            )
+        }
+    }
 }
 
 
-class MainViewModelFactory(private val repo: IEventsRepository?) : ViewModelProvider.Factory {
+class MainViewModelFactory(
+    private val repo: IEventsRepository?,
+    private val config: MainViewModel.Config?
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return MainViewModel(
-            repo ?: FakeEventRepository()
+            repo ?: FakeEventRepository(),
+            config ?: MainViewModel.Config.getDefault()
         ) as T
     }
 

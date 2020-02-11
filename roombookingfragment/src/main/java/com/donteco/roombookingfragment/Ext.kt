@@ -1,5 +1,6 @@
 package com.donteco.roombookingfragment
 
+import android.graphics.Color
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -29,4 +30,8 @@ fun Date.atStartOfDay(): Date {
 
 fun Log(mes: String) {
     android.util.Log.d("MyLog", mes)
+}
+
+fun Int.setAlpha(alphaPercent: Int): Int {
+    return Color.argb(255 / 100 * alphaPercent, Color.red(this), Color.green(this), Color.blue(this))
 }
