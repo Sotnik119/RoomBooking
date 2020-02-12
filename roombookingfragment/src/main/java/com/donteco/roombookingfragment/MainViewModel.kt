@@ -13,6 +13,8 @@ class MainViewModel(
     private val config: Config
 ) : ViewModel() {
 
+    val roomName = MutableLiveData<String>().apply { postValue(config.roomName) }
+
     private val currentEvent: MutableLiveData<Event?> = MutableLiveData()
 
     private val _status: MutableLiveData<Status> = MutableLiveData()
@@ -49,7 +51,7 @@ class MainViewModel(
             }
         }
 
-    val timeFormat = MutableLiveData<Format>().apply { postValue(Format.FORMAT_24H) }
+    val timeFormat = MutableLiveData<Format>().apply { postValue(config.timeFormat) }
 
     val filterDate = MutableLiveData<Date>().apply { postValue(Date().atStartOfDay()) }
     val filteredEvents: LiveData<Array<Event>>
@@ -189,7 +191,9 @@ class MainViewModel(
         }
         event?.also {
             if (repo.updateEvent(event)) {
-
+                //todo
+            } else {
+                //todo
             }
         }
     }
@@ -202,21 +206,25 @@ class MainViewModel(
     }
 
     data class Config(
+        val roomName: String,
         val freeColor: Int,
         val busyColor: Int,
         val willBusyColor: Int,
         val connectError: Int,
         val leftTransparent: Int,
-        val rightTransparent: Int
+        val rightTransparent: Int,
+        val timeFormat: Format
     ) {
         companion object {
             fun getDefault() = Config(
+                "",
                 Color.GREEN,
                 Color.RED,
                 Color.YELLOW,
                 Color.BLUE,
                 40,
-                60
+                60,
+                Format.FORMAT_24H
             )
         }
     }

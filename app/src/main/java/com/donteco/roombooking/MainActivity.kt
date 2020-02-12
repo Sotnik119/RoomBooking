@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
-import com.donteco.roombookingfragment.Format
 import com.donteco.roombookingfragment.MainViewModel
 import com.donteco.roombookingfragment.MainViewModelFactory
 import com.donteco.roombookingfragment.RoomBookingFragment
@@ -28,7 +27,9 @@ class MainActivity : AppCompatActivity() {
                 MainViewModel::class.java
             )
 
-        frag = RoomBookingFragment.newInstance(orientation, Format.FORMAT_24H, true)
+        model.roomName.postValue("Переговорка 2")
+
+        frag = RoomBookingFragment.newInstance(orientation, true)
 
         supportFragmentManager.beginTransaction().replace(R.id.container, frag!!, "room").commit()
     }
