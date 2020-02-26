@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.donteco.roombookingfragment.databinding.DialogEventsBinding
+import kotlinx.android.synthetic.main.dialog_events.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,41 +28,44 @@ class DayViewDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        val binding = DialogEventsBinding.inflate(layoutInflater, container, false)
+        val layout = inflater.inflate(R.layout.dialog_events, container, false)
         val viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
-        binding.lifecycleOwner = this
-        binding.viewModel = viewModel
 
-        binding.dayView.setRowSize(rowSize)
+
+        layout.day_view.setRowSize(rowSize)
 
         viewModel.filterDate.postValue(Date())
 
+        viewModel.mainColor.observe(this, Observer {
+            layout.header.setBackgroundColor(it)
+        })
+
         viewModel.timeFormat.observe(this, Observer {
-            binding.dayView.format = it
+            layout.day_view.format = it
         })
 
         viewModel.filterDate.observe(this, Observer {
-            binding.dateText.text =
+            layout.date_text.text =
                 it.toFormattedString(SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()))
-            if (it.atStartOfDay().time ==  Date().atStartOfDay().time) binding.dayView.drawCurrentTimeLine() else binding.dayView.removeCurrentTimeLine()
+            if (it.atStartOfDay().time == Date().atStartOfDay().time) layout.day_view.drawCurrentTimeLine() else layout.day_view.removeCurrentTimeLine()
         })
 
         viewModel.filteredEvents.observe(this, Observer {
-            binding.dayView.setEvents(it)
+            layout.day_view.setEvents(it)
         })
 
-        binding.prevDay.setOnClickListener {
+        layout.prev_day.setOnClickListener {
             val date = viewModel.filterDate.value!!
             val c = Calendar.getInstance().apply { time = date; add(Calendar.DAY_OF_MONTH, -1) }
             if (!c.time.before(Date().atStartOfDay()))
                 viewModel.filterDate.postValue(c.time)
         }
 
-        binding.nextDay.setOnClickListener {
+        layout.next_day.setOnClickListener {
             val date = viewModel.filterDate.value!!
             val c = Calendar.getInstance().apply { time = date; add(Calendar.DAY_OF_MONTH, 1) }
             viewModel.filterDate.postValue(c.time)
         }
-        return binding.root
+        return layout
     }
 }

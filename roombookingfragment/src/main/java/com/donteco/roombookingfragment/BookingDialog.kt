@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
-import com.donteco.roombookingfragment.databinding.DialogBookingBinding
-import com.donteco.roombookingfragment.databinding.ManageCurrentBinding
-import com.donteco.roombookingfragment.databinding.ManageFutureBinding
 import com.google.android.material.tabs.TabLayout
+import kotlinx.android.synthetic.main.dialog_booking.view.*
+import kotlinx.android.synthetic.main.manage_current.view.*
+import kotlinx.android.synthetic.main.manage_future.view.*
 import java.util.*
 
 class BookingDialog : DialogFragment() {
@@ -23,7 +23,7 @@ class BookingDialog : DialogFragment() {
 
     var mode = Mode.BOOK
     lateinit var viewModel: MainViewModel
-    lateinit var binding: DialogBookingBinding
+    lateinit var layout: View
     lateinit var callback: IClosable
 
     override fun onCreateView(
@@ -32,10 +32,11 @@ class BookingDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
-        binding = DialogBookingBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = activity!!
+        layout = inflater.inflate(R.layout.dialog_booking, container, false)
 
-        binding.model = viewModel
+        viewModel.mainColor.observe(this, androidx.lifecycle.Observer {
+            layout.linearLayout.setBackgroundColor(it)
+        })
 
         when (mode) {
             Mode.BOOK -> {
@@ -46,7 +47,7 @@ class BookingDialog : DialogFragment() {
             }
         }
 
-        return binding.root
+        return layout
     }
 
     override fun onStart() {
@@ -58,19 +59,19 @@ class BookingDialog : DialogFragment() {
     }
 
     private fun prepareBook() {
-        binding.headText.text = "Назначить встречу"
-        val tab1 = binding.tabLayout.newTab().apply { text = "Сейчас" }
-        val tab2 = binding.tabLayout.newTab().apply { text = "Позже" }
-        binding.tabLayout.addTab(tab1)
-        binding.tabLayout.addTab(tab2)
+        layout.head_text.text = "Назначить встречу"
+        val tab1 = layout.tab_layout.newTab().apply { text = "Сейчас" }
+        val tab2 = layout.tab_layout.newTab().apply { text = "Позже" }
+        layout.tab_layout.addTab(tab1)
+        layout.tab_layout.addTab(tab2)
         inflateFirstTabPrepare()
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        layout.tab_layout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
 
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                binding.frame.removeAllViews()
+                layout.frame.removeAllViews()
                 if (tab == tab1) {
                     inflateFirstTabPrepare()
                 } else {
@@ -83,7 +84,7 @@ class BookingDialog : DialogFragment() {
     @SuppressLint("SetTextI18n")
     private fun inflateFirstTabPrepare() {
         val buttonLayout =
-            ManageCurrentBinding.inflate(LayoutInflater.from(activity), binding.frame, true)
+            LayoutInflater.from(activity).inflate(R.layout.manage_current, layout.frame, true)
         buttonLayout.button1.apply {
             text = "15 мин"
             setOnClickListener { bookNow(15) }
@@ -99,15 +100,16 @@ class BookingDialog : DialogFragment() {
     }
 
     private fun inflateSecondTab() {
-        val layout = ManageFutureBinding.inflate(LayoutInflater.from(activity), binding.frame, true)
-        layout.chooserDay.apply {
+        val layout =
+            LayoutInflater.from(activity).inflate(R.layout.manage_future, layout.frame, true)
+        layout.chooser_day.apply {
             val names = arrayOf("Сегодня", "Завтра")
             minValue = 1
             maxValue = names.size
             displayedValues = names
         }
 
-        layout.chooserHour.apply {
+        layout.chooser_hour.apply {
             val names = arrayListOf<String>()
             for (i in 0..23) {
                 names.add(
@@ -124,14 +126,14 @@ class BookingDialog : DialogFragment() {
             value = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1
         }
 
-        layout.chooserMinute.apply {
+        layout.chooser_minute.apply {
             val names = arrayOf("00", "15", "30", "45")
             minValue = 1
             maxValue = 4
             displayedValues = names
         }
 
-        layout.chooserLength.apply {
+        layout.chooser_length.apply {
             val names = arrayOf("15 мин", "30 мин", "45 мин", "1 час")
             minValue = 1
             maxValue = names.size
@@ -140,38 +142,38 @@ class BookingDialog : DialogFragment() {
 
         layout.appCompatButton.setOnClickListener {
             val day =
-                if (layout.chooserDay.value == 1) Date() else Date().apply { time += 24 * 60 * 60 * 1000 }
+                if (layout.chooser_day.value == 1) Date() else Date().apply { time += 24 * 60 * 60 * 1000 }
 
             val calendar = Calendar.getInstance().apply {
                 time = day
-                set(Calendar.HOUR_OF_DAY, layout.chooserHour.value)
-                set(Calendar.MINUTE, layout.chooserMinute.value * 15)
+                set(Calendar.HOUR_OF_DAY, layout.chooser_hour.value)
+                set(Calendar.MINUTE, layout.chooser_minute.value * 15)
                 set(Calendar.SECOND, 0)
                 set(Calendar.MILLISECOND, 0)
             }
             val date = calendar.time
-            val length = layout.chooserLength.value * 15
+            val length = layout.chooser_length.value * 15
             val name =
-                if (layout.eventName.text.toString().isEmpty()) "Раннее бронировани" else layout.eventName.text.toString()
+                if (layout.event_name.text.toString().isEmpty()) "Раннее бронировани" else layout.event_name.text.toString()
 
             bookLater(date, length, name)
         }
     }
 
     private fun prepareManage() {
-        binding.headText.text = "Управление"
-        val tab1 = binding.tabLayout.newTab().apply { text = "Текущая встреча" }
-        val tab2 = binding.tabLayout.newTab().apply { text = "Новая встеча" }
-        binding.tabLayout.addTab(tab1)
-        binding.tabLayout.addTab(tab2)
+        layout.head_text.text = "Управление"
+        val tab1 = layout.tab_layout.newTab().apply { text = "Текущая встреча" }
+        val tab2 = layout.tab_layout.newTab().apply { text = "Новая встеча" }
+        layout.tab_layout.addTab(tab1)
+        layout.tab_layout.addTab(tab2)
         inflateFirstTabManage()
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        layout.tab_layout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
 
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                binding.frame.removeAllViews()
+                layout.frame.removeAllViews()
                 if (tab == tab1) {
                     inflateFirstTabManage()
                 } else {
@@ -184,7 +186,7 @@ class BookingDialog : DialogFragment() {
     @SuppressLint("SetTextI18n")
     private fun inflateFirstTabManage() {
         val buttonLayout =
-            ManageCurrentBinding.inflate(LayoutInflater.from(activity), binding.frame, true)
+            LayoutInflater.from(activity).inflate(R.layout.manage_current, layout.frame, true)
         buttonLayout.button1.apply {
             text = "Завершить"
             setOnClickListener { close() }

@@ -237,7 +237,7 @@ class MainViewModelFactory(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return MainViewModel(
-            repo ?: FakeEventRepository(),
+            repo ?: BaseEventRepository(),
             config ?: MainViewModel.Config.getDefault()
         ) as T
     }

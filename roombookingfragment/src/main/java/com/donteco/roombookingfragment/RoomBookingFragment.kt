@@ -7,8 +7,11 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.donteco.roombookingfragment.databinding.ActivityMainLandBinding
+import kotlinx.android.synthetic.main.activity_main_land.view.*
+import kotlinx.android.synthetic.main.room_status.view.*
+import kotlinx.android.synthetic.main.room_time.view.*
 
 class RoomBookingFragment : Fragment(), IClosable {
 
@@ -27,8 +30,8 @@ class RoomBookingFragment : Fragment(), IClosable {
             }
     }
 
+    private lateinit var layout: View
 
-    lateinit var binding: ActivityMainLandBinding
     var currentDialogFragment: Fragment? = null
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,67 +39,93 @@ class RoomBookingFragment : Fragment(), IClosable {
         savedInstanceState: Bundle?
     ): View? {
 
-        binding = ActivityMainLandBinding.inflate(layoutInflater)
+        layout = inflater.inflate(R.layout.activity_main_land, container, false)
 
         val viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
 //            ViewModelProviders.of(activity!!, MainViewModelFactory(repo)).get(MainViewModel::class.java)
 
-        binding.lifecycleOwner = this
-        binding.viewModel = viewModel
 
-        binding.mainFrame.orientation = when (orientation) {
+        layout.main_frame.orientation = when (orientation) {
             Orientation.VERTICAL -> LinearLayout.VERTICAL
             Orientation.HORIZONTAL -> LinearLayout.HORIZONTAL
         }
 
-        binding.dialog.setOnTouchListener { _, _ ->
+        viewModel.mainColorLeft.observe(this, Observer {
+            layout.room_status.setBackgroundColor(it)
+        })
+
+        viewModel.mainColorRight.observe(this, Observer {
+            layout.room_time.setBackgroundColor(it)
+        })
+
+        viewModel.roomName.observe(this, Observer {
+            layout.room_name.text = it
+        })
+
+        viewModel.time.observe(this, Observer {
+            layout.time.text = it
+        })
+
+        viewModel.roomText.observe(this, Observer {
+            layout.status.text = it
+        })
+
+        viewModel.bookButtonText.observe(this, Observer {
+            layout.btn_book_room.text = it
+        })
+
+        viewModel.mainColor.observe(this, Observer {
+            layout.btn_book_room.setBackgroundColor(it)
+        })
+
+        layout.dialog.setOnTouchListener { _, _ ->
             close()
             false
         }
 
-        binding.roomStatus.btnCalendar.setOnClickListener {
-            val dialog =
-                DayViewDialog.newInstance(binding.root.measuredHeight / 8)
+        layout.btn_calendar.setOnClickListener {
+            val dialogFragment =
+                DayViewDialog.newInstance(layout.measuredHeight / 8)
             if (useCustomDialogs) {
-                binding.dialog.visibility = View.VISIBLE
-                currentDialogFragment = dialog
+                layout.dialog.visibility = View.VISIBLE
+                currentDialogFragment = dialogFragment
                 activity!!.supportFragmentManager.beginTransaction().apply {
                     setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     replace(R.id.dialog_frame, currentDialogFragment!!)
                     commit()
                 }
             } else {
-                dialog.show(activity!!.supportFragmentManager, "DayViewDialog")
+                dialogFragment.show(activity!!.supportFragmentManager, "DayViewDialog")
             }
         }
 
 
-        binding.roomTime.btnBookRoom.setOnClickListener {
+        layout.btn_book_room.setOnClickListener {
             val mode =
                 if (viewModel.status.value == MainViewModel.Status.STATUS_OCCUPIED) BookingDialog.Mode.MANAGE else BookingDialog.Mode.BOOK
 
-            val dialog =
+            val dialogFragment =
                 BookingDialog.newInstance(mode, this)
             if (useCustomDialogs) {
-                binding.dialog.visibility = View.VISIBLE
-                currentDialogFragment = dialog
+                layout.dialog.visibility = View.VISIBLE
+                currentDialogFragment = dialogFragment
                 activity!!.supportFragmentManager.beginTransaction().apply {
                     setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     replace(R.id.dialog_frame, currentDialogFragment!!)
                     commit()
                 }
             } else {
-                dialog.show(activity!!.supportFragmentManager, "BookDialog")
+                dialogFragment.show(activity!!.supportFragmentManager, "BookDialog")
             }
         }
-        return binding.root
+        return layout
     }
 
     /**
      * Close dialog
      */
     override fun close() {
-        binding.dialog.visibility = View.GONE
+        layout.dialog.visibility = View.GONE
         if (currentDialogFragment != null) {
             activity!!.supportFragmentManager.beginTransaction().apply {
                 remove(currentDialogFragment!!)
