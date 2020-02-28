@@ -1,5 +1,7 @@
 package com.donteco.roombookingfragment
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import kotlinx.android.synthetic.main.activity_main_land.*
 import kotlinx.android.synthetic.main.activity_main_land.view.*
 import kotlinx.android.synthetic.main.room_status.view.*
 import kotlinx.android.synthetic.main.room_time.view.*
@@ -78,6 +81,12 @@ class RoomBookingFragment : Fragment(), IClosable {
             layout.btn_book_room.setBackgroundColor(it)
         })
 
+        viewModel.messages.observe(this, Observer {
+            if (it != null) {
+                showMessage(it.type, it.header, it.text)
+            }
+        })
+
         layout.dialog.setOnTouchListener { _, _ ->
             close()
             false
@@ -121,6 +130,7 @@ class RoomBookingFragment : Fragment(), IClosable {
         return layout
     }
 
+
     /**
      * Close dialog
      */
@@ -132,6 +142,44 @@ class RoomBookingFragment : Fragment(), IClosable {
                 commit()
             }
         }
+    }
+
+    private fun showMessage(type: Boolean, headText: String, messageText: String) {
+        message_icon.setImageResource(if (type) R.drawable.ic_tick else R.drawable.ic_cancel)
+        message_status.text = headText
+        message_text.text = messageText
+
+        message.alpha = 0f
+        message.visibility = View.VISIBLE
+//        message.animate()
+//            .alpha(1f)
+//            .setDuration(500L)
+//            .withEndAction {
+//                message.animate()
+//                    .alpha(0f)
+//                    .setDuration(500L)
+//                    .withEndAction {
+//                        message.visibility = View.INVISIBLE
+//                    }
+//                    .setStartDelay(2000L)
+//                    .start()
+//            }
+//            .start()
+
+        val animationShow = ObjectAnimator.ofFloat(message, View.ALPHA, 0f, 1f).apply {
+            duration = 500
+        }
+        val animationHide = ObjectAnimator.ofFloat(message, View.ALPHA, 1f, 0f).apply {
+            duration = 500
+            startDelay = 2000L
+        }
+
+
+        val set = AnimatorSet()
+        set.playSequentially(animationShow, animationHide)
+        set.start()
+
+
     }
 
     enum class Orientation {

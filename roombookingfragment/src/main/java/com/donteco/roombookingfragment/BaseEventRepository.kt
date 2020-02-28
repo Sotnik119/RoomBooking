@@ -9,8 +9,14 @@ class BaseEventRepository : IEventsRepository {
 
     val rep: MutableLiveData<Array<Event>> = MutableLiveData()
 
+    val messageSender = MutableLiveData<Message>()
+
     val format = SimpleDateFormat("yyyy, MM, dd, HH, mm")
     private val evens = arrayListOf<Event>()
+
+    override fun getMessages(): LiveData<Message> {
+        return messageSender
+    }
 //        Event(
 //            format.parse("2020, 01, 29, 11, 40"),
 //            format.parse("2020, 01, 29, 13, 00"),
@@ -49,6 +55,7 @@ class BaseEventRepository : IEventsRepository {
         return if (canAddEvent(event)) {
             evens.add(event)
             update()
+            messageSender.postValue(Message(true, "Забронировано!", "Зал забронирован"))
             true
         } else {
             false
@@ -59,6 +66,7 @@ class BaseEventRepository : IEventsRepository {
         return if (canUpdateEvent(event)) {
             evens.remove(evens.find { it.id == event.id })
             evens.add(event)
+            messageSender.postValue(Message(true, "Забронировано!", "Зал забронирован"))
             update()
             true
         } else

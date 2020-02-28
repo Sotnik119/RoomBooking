@@ -73,6 +73,7 @@ class MainViewModel(
         setEvents(it)
     }
 
+    val messages = repo.getMessages()
     init {
         setStatus(Status.STATUS_UNKNOWN)
 
