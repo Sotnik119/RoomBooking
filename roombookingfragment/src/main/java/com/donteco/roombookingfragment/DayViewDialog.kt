@@ -1,6 +1,7 @@
 package com.donteco.roombookingfragment
 
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +29,8 @@ class DayViewDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        val layout = inflater.inflate(R.layout.dialog_events, container, false)
+        val myInflater = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme123))
+        val layout = myInflater.inflate(R.layout.dialog_events, container, false)
         val viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
 
 
@@ -42,6 +44,12 @@ class DayViewDialog : DialogFragment() {
 
         viewModel.timeFormat.observe(this, Observer {
             layout.day_view.format = it
+        })
+
+        viewModel.fontColor.observe(this, Observer {
+            layout.date_text.setTextColor(it)
+            layout.prev_day.setColorFilter(it)
+            layout.next_day.setColorFilter(it)
         })
 
         viewModel.filterDate.observe(this, Observer {

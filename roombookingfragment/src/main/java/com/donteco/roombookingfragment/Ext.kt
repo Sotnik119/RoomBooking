@@ -33,5 +33,10 @@ fun Log(mes: String) {
 }
 
 fun Int.setAlpha(alphaPercent: Int): Int {
-    return Color.argb(255 / 100 * alphaPercent, Color.red(this), Color.green(this), Color.blue(this))
+    return Color.argb(
+        (255.toFloat() / 100 * alphaPercent).toInt(),
+        Color.red(this),
+        Color.green(this),
+        Color.blue(this)
+    )
 }

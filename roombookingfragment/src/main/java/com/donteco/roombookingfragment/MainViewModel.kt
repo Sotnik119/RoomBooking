@@ -26,16 +26,20 @@ class MainViewModel(
         get() = _mainColor
     val mainColorLeft: LiveData<Int>
         get() = Transformations.map(_mainColor) {
-            it.setAlpha(config.leftTransparent)
+            it.setAlpha(100 - config.leftTransparent)
         }
     val mainColorRight: LiveData<Int>
         get() = Transformations.map(_mainColor) {
-            it.setAlpha(config.rightTransparent)
+            it.setAlpha(100 - config.rightTransparent)
         }
 
     private val _time: MutableLiveData<String> = MutableLiveData()
     val time: LiveData<String>
         get() = _time
+
+    private val _fontColor: MutableLiveData<Int> = MutableLiveData()
+    val fontColor: LiveData<Int>
+        get() = _fontColor
 
     private val _roomText: MutableLiveData<String> = MutableLiveData()
     val roomText: LiveData<String>
@@ -44,8 +48,8 @@ class MainViewModel(
 
     val bookButtonText: LiveData<String>
         get() = Transformations.map(status) {
-            if (it == Status.STATUS_AVAILABLE) {
-                "Бронировать"
+            if (it != Status.STATUS_OCCUPIED) {
+                "Забронироваь зал"
             } else {
                 "Управление"
             }
@@ -74,6 +78,7 @@ class MainViewModel(
     }
 
     val messages = repo.getMessages()
+
     init {
         setStatus(Status.STATUS_UNKNOWN)
 
@@ -88,6 +93,7 @@ class MainViewModel(
             )
             update()
         }
+        _fontColor.postValue(config.fontColor)
     }
 
     //Updating state
@@ -98,7 +104,7 @@ class MainViewModel(
             if (closest.isEventTakesPlaceNow()) {
                 setStatus(Status.STATUS_OCCUPIED)
             } else {
-                if (closest.getRemainedTime() < 30) {
+                if (closest.getRemainedTime() < 15) {
                     setStatus(Status.STATUS_WAIT)
                 } else {
                     setStatus(Status.STATUS_AVAILABLE)
@@ -161,7 +167,6 @@ class MainViewModel(
         }
         val timeStart = Calendar.getInstance().apply {
             time = date
-            set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }
         val event = Event(timeStart.time, timeEnd.time, name, "")
@@ -212,6 +217,7 @@ class MainViewModel(
         val busyColor: Int,
         val willBusyColor: Int,
         val connectError: Int,
+        val fontColor: Int,
         val leftTransparent: Int,
         val rightTransparent: Int,
         val timeFormat: Format
@@ -223,6 +229,7 @@ class MainViewModel(
                 Color.RED,
                 Color.YELLOW,
                 Color.BLUE,
+                Color.YELLOW,
                 40,
                 60,
                 Format.FORMAT_24H

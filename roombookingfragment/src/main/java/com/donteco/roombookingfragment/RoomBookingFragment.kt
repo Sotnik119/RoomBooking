@@ -3,6 +3,7 @@ package com.donteco.roombookingfragment
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,7 +43,8 @@ class RoomBookingFragment : Fragment(), IClosable {
         savedInstanceState: Bundle?
     ): View? {
 
-        layout = inflater.inflate(R.layout.activity_main_land, container, false)
+        val myInflater = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme123))
+        layout = myInflater.inflate(R.layout.activity_main_land, container, false)
 
         val viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
 //            ViewModelProviders.of(activity!!, MainViewModelFactory(repo)).get(MainViewModel::class.java)
@@ -81,9 +83,18 @@ class RoomBookingFragment : Fragment(), IClosable {
             layout.btn_book_room.setBackgroundColor(it)
         })
 
+        viewModel.fontColor.observe(this, Observer {
+            layout.btn_book_room.setTextColor(it)
+            layout.status.setTextColor(it)
+            layout.time.setTextColor(it)
+            layout.room_name.setTextColor(it)
+            layout.btn_calendar.setColorFilter(it)
+        })
+
         viewModel.messages.observe(this, Observer {
             if (it != null) {
                 showMessage(it.type, it.header, it.text)
+                viewModel.messages.postValue(null)
             }
         })
 
@@ -144,6 +155,14 @@ class RoomBookingFragment : Fragment(), IClosable {
         }
     }
 
+//    fun sendColorBroadcast(color: Int) {
+//        activity?.sendBroadcast(
+//            Intent("com.cubicmedia.action.LED_BAR_COLOR").setPackage("com.donteco.elcledcontroller")
+//                .putExtra("COLOR", color)
+//                .putExtra("BRIGHTNESS", 100)
+//        )
+//    }
+
     private fun showMessage(type: Boolean, headText: String, messageText: String) {
         message_icon.setImageResource(if (type) R.drawable.ic_tick else R.drawable.ic_cancel)
         message_status.text = headText
@@ -151,20 +170,6 @@ class RoomBookingFragment : Fragment(), IClosable {
 
         message.alpha = 0f
         message.visibility = View.VISIBLE
-//        message.animate()
-//            .alpha(1f)
-//            .setDuration(500L)
-//            .withEndAction {
-//                message.animate()
-//                    .alpha(0f)
-//                    .setDuration(500L)
-//                    .withEndAction {
-//                        message.visibility = View.INVISIBLE
-//                    }
-//                    .setStartDelay(2000L)
-//                    .start()
-//            }
-//            .start()
 
         val animationShow = ObjectAnimator.ofFloat(message, View.ALPHA, 0f, 1f).apply {
             duration = 500
@@ -178,7 +183,6 @@ class RoomBookingFragment : Fragment(), IClosable {
         val set = AnimatorSet()
         set.playSequentially(animationShow, animationHide)
         set.start()
-
 
     }
 

@@ -9,12 +9,12 @@ class BaseEventRepository : IEventsRepository {
 
     val rep: MutableLiveData<Array<Event>> = MutableLiveData()
 
-    val messageSender = MutableLiveData<Message>()
+    val messageSender = MutableLiveData<Message?>()
 
     val format = SimpleDateFormat("yyyy, MM, dd, HH, mm")
     private val evens = arrayListOf<Event>()
 
-    override fun getMessages(): LiveData<Message> {
+    override fun getMessages(): MutableLiveData<Message?> {
         return messageSender
     }
 //        Event(

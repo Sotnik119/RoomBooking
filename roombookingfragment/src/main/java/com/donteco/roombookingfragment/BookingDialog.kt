@@ -2,6 +2,7 @@ package com.donteco.roombookingfragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,11 +32,16 @@ class BookingDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
-        layout = inflater.inflate(R.layout.dialog_booking, container, false)
+        val myInflater = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme123))
+        layout = myInflater.inflate(R.layout.dialog_booking, container, false)
 
         viewModel.mainColor.observe(this, androidx.lifecycle.Observer {
             layout.linearLayout.setBackgroundColor(it)
+        })
+        viewModel.fontColor.observe(this, androidx.lifecycle.Observer {
+            layout.head_text.setTextColor(it)
         })
 
         when (mode) {
@@ -83,8 +89,10 @@ class BookingDialog : DialogFragment() {
 
     @SuppressLint("SetTextI18n")
     private fun inflateFirstTabPrepare() {
+        val myInflater = LayoutInflater.from(activity)
+            .cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme123))
         val buttonLayout =
-            LayoutInflater.from(activity).inflate(R.layout.manage_current, layout.frame, true)
+            myInflater.inflate(R.layout.manage_current, layout.frame, true)
         buttonLayout.button1.apply {
             text = "15 мин"
             setOnClickListener { bookNow(15) }
@@ -100,8 +108,10 @@ class BookingDialog : DialogFragment() {
     }
 
     private fun inflateSecondTab() {
+        val myInflater = LayoutInflater.from(activity)
+            .cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme123))
         val layout =
-            LayoutInflater.from(activity).inflate(R.layout.manage_future, layout.frame, true)
+            myInflater.inflate(R.layout.manage_future, layout.frame, true)
         layout.chooser_day.apply {
             val names = arrayOf("Сегодня", "Завтра")
             minValue = 1
@@ -185,18 +195,20 @@ class BookingDialog : DialogFragment() {
 
     @SuppressLint("SetTextI18n")
     private fun inflateFirstTabManage() {
+        val myInflater = LayoutInflater.from(activity)
+            .cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme123))
         val buttonLayout =
-            LayoutInflater.from(activity).inflate(R.layout.manage_current, layout.frame, true)
+            myInflater.inflate(R.layout.manage_current, layout.frame, true)
         buttonLayout.button1.apply {
             text = "Завершить"
             setOnClickListener { close() }
         }
         buttonLayout.button2.apply {
-            text = "+15 мин"
+            text = "+ 15 мин."
             setOnClickListener { extend(15) }
         }
         buttonLayout.button3.apply {
-            text = "+30 мин"
+            text = "+ 30 мин."
             setOnClickListener { extend(30) }
         }
     }

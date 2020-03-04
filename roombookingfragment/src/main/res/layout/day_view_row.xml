@@ -38,17 +38,17 @@
 
         <View
             android:layout_width="0dp"
-            android:layout_height="1px"
+            android:layout_height="1dp"
             android:layout_gravity="center"
             android:layout_weight="8"
-            android:background="@color/black_trans" />
+            android:background="#E6000000" />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1px"
+        android:layout_height="1dp"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="30dp"
-        android:background="@color/black_trans" />
+        android:background="#E6000000" />
 </RelativeLayout>
