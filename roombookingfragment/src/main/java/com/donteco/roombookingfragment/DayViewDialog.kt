@@ -35,6 +35,7 @@ class DayViewDialog : DialogFragment() {
 
 
         layout.day_view.setRowSize(rowSize)
+        layout.day_view.scrollToCurrentTime()
 
         viewModel.filterDate.postValue(Date())
 

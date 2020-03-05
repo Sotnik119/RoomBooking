@@ -49,6 +49,7 @@ class RoomBookingFragment : Fragment(), IClosable {
         val viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
 //            ViewModelProviders.of(activity!!, MainViewModelFactory(repo)).get(MainViewModel::class.java)
 
+        viewModel.widgetOrientation = orientation
 
         layout.main_frame.orientation = when (orientation) {
             Orientation.VERTICAL -> LinearLayout.VERTICAL
@@ -105,7 +106,7 @@ class RoomBookingFragment : Fragment(), IClosable {
 
         layout.btn_calendar.setOnClickListener {
             val dialogFragment =
-                DayViewDialog.newInstance(layout.measuredHeight / 8)
+                DayViewDialog.newInstance(if (viewModel.widgetOrientation == Orientation.VERTICAL) layout.measuredHeight / 9 else layout.measuredHeight / 7)
             if (useCustomDialogs) {
                 layout.dialog.visibility = View.VISIBLE
                 currentDialogFragment = dialogFragment

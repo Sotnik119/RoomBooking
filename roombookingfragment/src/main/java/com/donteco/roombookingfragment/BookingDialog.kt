@@ -6,11 +6,12 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.dialog_booking.view.*
-import kotlinx.android.synthetic.main.manage_current.view.*
+import kotlinx.android.synthetic.main.manage_current_landscape.view.*
 import kotlinx.android.synthetic.main.manage_future.view.*
 import java.util.*
 
@@ -38,11 +39,22 @@ class BookingDialog : DialogFragment() {
         layout = myInflater.inflate(R.layout.dialog_booking, container, false)
 
         viewModel.mainColor.observe(this, androidx.lifecycle.Observer {
-            layout.linearLayout.setBackgroundColor(it)
+            layout.head_layout.setBackgroundColor(it)
         })
         viewModel.fontColor.observe(this, androidx.lifecycle.Observer {
             layout.head_text.setTextColor(it)
         })
+
+        if (viewModel.widgetOrientation == RoomBookingFragment.Orientation.VERTICAL) {
+            layout.head_layout.layoutParams =
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
+            layout.tab_layout.layoutParams =
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
+            layout.frame.layoutParams =
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 9f)
+            layout.body.layoutParams =
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 9f)
+        }
 
         when (mode) {
             Mode.BOOK -> {
@@ -92,7 +104,11 @@ class BookingDialog : DialogFragment() {
         val myInflater = LayoutInflater.from(activity)
             .cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme123))
         val buttonLayout =
-            myInflater.inflate(R.layout.manage_current, layout.frame, true)
+            myInflater.inflate(
+                if (viewModel.widgetOrientation == RoomBookingFragment.Orientation.VERTICAL) R.layout.manage_current_portrait else R.layout.manage_current_landscape,
+                layout.frame,
+                true
+            )
         buttonLayout.button1.apply {
             text = "15 мин"
             setOnClickListener { bookNow(15) }
@@ -138,8 +154,8 @@ class BookingDialog : DialogFragment() {
 
         layout.chooser_minute.apply {
             val names = arrayOf("00", "15", "30", "45")
-            minValue = 1
-            maxValue = 4
+            minValue = 0
+            maxValue = 3
             displayedValues = names
         }
 
@@ -164,7 +180,7 @@ class BookingDialog : DialogFragment() {
             val date = calendar.time
             val length = layout.chooser_length.value * 15
             val name =
-                if (layout.event_name.text.toString().isEmpty()) "Раннее бронировани" else layout.event_name.text.toString()
+                if (layout.event_name.text.toString().isEmpty()) "Раннее бронирование" else layout.event_name.text.toString()
 
             bookLater(date, length, name)
         }
@@ -198,7 +214,7 @@ class BookingDialog : DialogFragment() {
         val myInflater = LayoutInflater.from(activity)
             .cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme123))
         val buttonLayout =
-            myInflater.inflate(R.layout.manage_current, layout.frame, true)
+            myInflater.inflate( if (viewModel.widgetOrientation == RoomBookingFragment.Orientation.VERTICAL) R.layout.manage_current_portrait else R.layout.manage_current_landscape, layout.frame, true)
         buttonLayout.button1.apply {
             text = "Завершить"
             setOnClickListener { close() }

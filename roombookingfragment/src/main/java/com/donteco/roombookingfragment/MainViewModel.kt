@@ -13,6 +13,8 @@ class MainViewModel(
     private val config: Config
 ) : ViewModel() {
 
+    lateinit var widgetOrientation: RoomBookingFragment.Orientation
+
     val roomName = MutableLiveData<String>().apply { postValue(config.roomName) }
 
     private val currentEvent: MutableLiveData<Event?> = MutableLiveData()
@@ -144,10 +146,30 @@ class MainViewModel(
             when (newStatus) {
                 Status.STATUS_AVAILABLE -> "\nДоступно\n"
                 Status.STATUS_OCCUPIED -> currentEvent.value?.toString()
-                Status.STATUS_WAIT -> "Доступно на ${currentEvent.value?.getRemainedTime()} минут"
+                Status.STATUS_WAIT -> "Доступно на ${getTextForMinutes(
+                    currentEvent.value?.getRemainedTime() ?: 0
+                )}"
                 else -> "\nНет связи с сервером\n"
             }
         )
+    }
+
+    private fun getTextForMinutes(minutes: Int): String {
+        return try {
+            if (minutes in 11..19) {
+                "$minutes минут"
+            } else {
+                val word = when (minutes.toString().last().toInt()) {
+                    1 -> "минуту"
+                    in 2..4 -> "минуты"
+                    else -> "минут"
+                }
+                "$minutes $word"
+            }
+        } catch (e: Exception) {
+            "$minutes минут"
+        }
+
     }
 
     override fun onCleared() {
@@ -229,7 +251,7 @@ class MainViewModel(
                 Color.RED,
                 Color.YELLOW,
                 Color.BLUE,
-                Color.YELLOW,
+                Color.WHITE,
                 40,
                 60,
                 Format.FORMAT_24H

@@ -87,17 +87,19 @@
                 tools:text="21.01.2020" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ScrollView
+        <!--        <ScrollView-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="0dp"-->
+        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="@+id/guideline9">-->
+
+        <com.donteco.roombookingfragment.DayView
+            android:id="@+id/day_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline9">
-
-            <com.donteco.roombookingfragment.DayView
-                android:id="@+id/day_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </ScrollView>
+            app:layout_constraintTop_toTopOf="@+id/guideline9" />
+        <!--        </ScrollView>-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

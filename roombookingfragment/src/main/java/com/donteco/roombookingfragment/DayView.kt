@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ScrollView
 import kotlinx.android.synthetic.main.day_view_event.view.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -14,18 +15,19 @@ class DayView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) :
-    FrameLayout(context, attrs, defStyleAttr) {
+) : ScrollView(context, attrs, defStyleAttr) {
+
+    val frame = FrameLayout(context)
     private val dayViewLayout = DayViewLayout(context)
     private var _rowSize = 160
     private val events = ArrayList<Event>()
     private val drawedEvents = ArrayList<View>()
-    private val currentTimeLine = View(context).apply {
-        setBackgroundColor(resources.getColor(R.color.roomOccupied))
-    }
-
+    private var currentTimeLine = LayoutInflater.from(context).inflate(R.layout.time_line, null)
     init {
         this.addView(
+            frame, ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+        )
+        frame.addView(
             dayViewLayout,
             ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         )
@@ -81,7 +83,7 @@ class DayView @JvmOverloads constructor(
 
             val item = LayoutInflater.from(context).inflate(R.layout.day_view_event, null)
             drawedEvents.add(item)
-            this.addView(item, LayoutParams(LayoutParams.MATCH_PARENT, height.toInt()).apply {
+            frame.addView(item, LayoutParams(LayoutParams.MATCH_PARENT, height.toInt()).apply {
                 this.topMargin = startPos.toInt()
             })
 
@@ -96,15 +98,24 @@ class DayView @JvmOverloads constructor(
         val h = calendar.get(Calendar.HOUR_OF_DAY)
         val m = calendar.get(Calendar.MINUTE)
         val topMargin = (h * _rowSize + _rowSize.toFloat() / 60 * m) + _rowSize / 2
-
-        this.addView(currentTimeLine, LayoutParams(LayoutParams.MATCH_PARENT, 3).apply {
+        frame.addView(currentTimeLine, LayoutParams(LayoutParams.MATCH_PARENT, 3).apply {
             this.topMargin = topMargin.toInt()
         })
     }
 
+    fun scrollToCurrentTime() {
+        val calendar = Calendar.getInstance()
+        val h = calendar.get(Calendar.HOUR_OF_DAY)
+        val m = calendar.get(Calendar.MINUTE)
+        val topMargin = ((h * _rowSize + _rowSize.toFloat() / 60 * m) + _rowSize / 2)
+        this.post {
+            scrollTo(0, topMargin.toInt() - measuredHeight/2)
+        }
+    }
+
     fun removeCurrentTimeLine() {
         try {
-            this.removeView(currentTimeLine)
+            frame.removeView(currentTimeLine)
         } catch (e: Exception) {
             android.util.Log.d("DayView", "CurrentTimeLine doesn't have parent")
         }
