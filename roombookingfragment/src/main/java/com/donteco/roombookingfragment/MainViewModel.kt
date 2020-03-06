@@ -80,6 +80,7 @@ class MainViewModel(
     }
 
     val messages = repo.getMessages()
+    val loading = repo.getLoadingState()
 
     init {
         setStatus(Status.STATUS_UNKNOWN)
@@ -159,7 +160,7 @@ class MainViewModel(
             if (minutes in 11..19) {
                 "$minutes минут"
             } else {
-                val word = when (minutes.toString().last().toInt()) {
+                val word = when (minutes%10) {
                     1 -> "минуту"
                     in 2..4 -> "минуты"
                     else -> "минут"

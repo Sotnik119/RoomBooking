@@ -53,13 +53,23 @@ class BaseEventRepository : IEventsRepository {
 
     override fun addEvent(event: Event): Boolean {
         return if (canAddEvent(event)) {
+            _loading.postValue(Message(true, "Операция выполняется", "Пожалуйса, подождите..."))
+
+            _loading.postValue(Message(false))
             evens.add(event)
             update()
             messageSender.postValue(Message(true, "Забронировано!", "Зал забронирован"))
+
             true
         } else {
+            messageSender.postValue(Message(false, "Ошибка", "Проверьте данные"))
             false
         }
+    }
+
+    private val _loading = MutableLiveData<Message>()
+    override fun getLoadingState(): LiveData<Message> {
+        return _loading
     }
 
     override fun updateEvent(event: Event): Boolean {
@@ -85,7 +95,6 @@ class BaseEventRepository : IEventsRepository {
             evens.filter { it.startDate.atStartOfDay().time == event.startDate.atStartOfDay().time }
 
         val crossed = daylyEvents.firstOrNull { event.crossAnotherEvent(it) }
-
         return crossed == null
     }
 

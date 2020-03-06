@@ -11,6 +11,8 @@ interface IEventsRepository {
         return true
     }
 
+    fun getLoadingState(): LiveData<Message>
+
     fun updateEvent(event: Event): Boolean {
         return true
     }
