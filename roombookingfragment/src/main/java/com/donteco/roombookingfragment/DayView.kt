@@ -57,7 +57,7 @@ class DayView @JvmOverloads constructor(
 
     private fun clearDrawledEvents() {
         drawedEvents.forEach {
-            this.removeView(it)
+            frame.removeView(it)
         }
         drawedEvents.clear()
 

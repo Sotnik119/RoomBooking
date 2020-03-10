@@ -113,8 +113,9 @@ class RoomBookingFragment : Fragment(), IClosable {
         }
 
         layout.btn_calendar.setOnClickListener {
+            val rowsize = (if(layout.measuredHeight > layout.measuredWidth) layout.measuredWidth else layout.measuredHeight) / 9
             val dialogFragment =
-                DayViewDialog.newInstance(if (viewModel.widgetOrientation == Orientation.VERTICAL) layout.measuredHeight / 9 else layout.measuredHeight / 7)
+                DayViewDialog.newInstance(rowsize)
             if (useCustomDialogs) {
                 layout.dialog.visibility = View.VISIBLE
                 currentDialogFragment = dialogFragment

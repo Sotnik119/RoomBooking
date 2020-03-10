@@ -6,7 +6,6 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.tabs.TabLayout
@@ -45,16 +44,16 @@ class BookingDialog : DialogFragment() {
             layout.head_text.setTextColor(it)
         })
 
-        if (viewModel.widgetOrientation == RoomBookingFragment.Orientation.VERTICAL) {
-            layout.head_layout.layoutParams =
-                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
-            layout.tab_layout.layoutParams =
-                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
-            layout.frame.layoutParams =
-                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 9f)
-            layout.body.layoutParams =
-                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 9f)
-        }
+//        if (viewModel.widgetOrientation == RoomBookingFragment.Orientation.VERTICAL) {
+//            layout.head_layout.layoutParams =
+//                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
+//            layout.tab_layout.layoutParams =
+//                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
+//            layout.frame.layoutParams =
+//                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 9f)
+//            layout.body.layoutParams =
+//                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 9f)
+//        }
 
         when (mode) {
             Mode.BOOK -> {
@@ -103,12 +102,16 @@ class BookingDialog : DialogFragment() {
     private fun inflateFirstTabPrepare() {
         val myInflater = LayoutInflater.from(activity)
             .cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme123))
-        val buttonLayout =
-            myInflater.inflate(
-                if (viewModel.widgetOrientation == RoomBookingFragment.Orientation.VERTICAL) R.layout.manage_current_portrait else R.layout.manage_current_landscape,
-                layout.frame,
-                true
-            )
+        val buttonLayout = myInflater.inflate(
+            R.layout.manage_current_portrait,
+            layout.frame,
+            true
+        )
+//            myInflater.inflate(
+//                if (viewModel.widgetOrientation == RoomBookingFragment.Orientation.VERTICAL) R.layout.manage_current_portrait else R.layout.manage_current_landscape,
+//                layout.frame,
+//                true
+//            )
         buttonLayout.button1.apply {
             text = "15 мин"
             setOnClickListener { bookNow(15) }
@@ -213,8 +216,16 @@ class BookingDialog : DialogFragment() {
     private fun inflateFirstTabManage() {
         val myInflater = LayoutInflater.from(activity)
             .cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme123))
-        val buttonLayout =
-            myInflater.inflate( if (viewModel.widgetOrientation == RoomBookingFragment.Orientation.VERTICAL) R.layout.manage_current_portrait else R.layout.manage_current_landscape, layout.frame, true)
+        val buttonLayout = myInflater.inflate(
+            R.layout.manage_current_portrait,
+            layout.frame,
+            true
+        )
+//            myInflater.inflate(
+//                if (viewModel.widgetOrientation == RoomBookingFragment.Orientation.VERTICAL) R.layout.manage_current_portrait else R.layout.manage_current_landscape,
+//                layout.frame,
+//                true
+//            )
         buttonLayout.button1.apply {
             text = "Завершить"
             setOnClickListener { close() }
