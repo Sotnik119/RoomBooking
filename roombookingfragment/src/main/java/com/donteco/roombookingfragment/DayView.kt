@@ -23,6 +23,8 @@ class DayView @JvmOverloads constructor(
     private val events = ArrayList<Event>()
     private val drawedEvents = ArrayList<View>()
     private var currentTimeLine = LayoutInflater.from(context).inflate(R.layout.time_line, null)
+    var roomName = ""
+
     init {
         this.addView(
             frame, ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
@@ -87,8 +89,25 @@ class DayView @JvmOverloads constructor(
                 this.topMargin = startPos.toInt()
             })
 
-            item.event_card.setCardBackgroundColor(resources.getColor(R.color.roomOccupied))
-            item.event_text.text = it.getEventDescription(format)
+
+            item.event_card.setCardBackgroundColor(
+                if (it.endDate.time < Date().time) resources.getColor(
+                    R.color.eventEnded
+                ) else resources.getColor(R.color.roomOccupied)
+            )
+
+            val textsize = _rowSize.toFloat() / 4.5f
+            if (height >= _rowSize) {
+                item.event_room.textSize = textsize
+                item.event_room.text = roomName
+            }
+            if (height >= _rowSize / 2) {
+                item.event_name.textSize = textsize
+                item.event_time.textSize = textsize
+                item.event_name.text = it.name
+                item.event_time.text = it.getFormattedTime(format)
+
+            }
         }
     }
 
@@ -109,7 +128,7 @@ class DayView @JvmOverloads constructor(
         val m = calendar.get(Calendar.MINUTE)
         val topMargin = ((h * _rowSize + _rowSize.toFloat() / 60 * m) + _rowSize / 2)
         this.post {
-            scrollTo(0, topMargin.toInt() - measuredHeight/2)
+            scrollTo(0, topMargin.toInt() - measuredHeight / 2)
         }
     }
 

@@ -63,6 +63,10 @@ class DayViewDialog : DialogFragment() {
             layout.day_view.setEvents(it)
         })
 
+        viewModel.roomName.observe(this, Observer {
+            layout.day_view.roomName = it
+        })
+
         layout.prev_day.setOnClickListener {
             val date = viewModel.filterDate.value!!
             val c = Calendar.getInstance().apply { time = date; add(Calendar.DAY_OF_MONTH, -1) }

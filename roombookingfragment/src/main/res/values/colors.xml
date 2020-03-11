@@ -9,5 +9,7 @@
     <color name="roomWait">#EBC81A</color>
     <color name="roomUnknow">#FFFFFF</color>
 
+    <color name="numberpicker_divider">#818181</color>
+    <color name="eventEnded">#CD8686</color>
     <color name="black_trans">#1F1E1E</color>
 </resources>

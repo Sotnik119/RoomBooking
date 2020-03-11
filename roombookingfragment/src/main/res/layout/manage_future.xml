@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        android:weightSum="10.3"
+        android:weightSum="12.3"
         app:layout_constraintBottom_toTopOf="@+id/event_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.5"
@@ -18,7 +18,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.06999999">
 
-        <NumberPicker
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <com.shawnlin.numberpicker.NumberPicker
             android:id="@+id/chooser_day"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -29,7 +34,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
-        <NumberPicker
+        <com.shawnlin.numberpicker.NumberPicker
             android:id="@+id/chooser_hour"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -42,7 +47,7 @@
             android:gravity="center"
             android:text=":" />
 
-        <NumberPicker
+        <com.shawnlin.numberpicker.NumberPicker
             android:id="@+id/chooser_minute"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -53,11 +58,17 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
-        <NumberPicker
+        <com.shawnlin.numberpicker.NumberPicker
             android:id="@+id/chooser_length"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2.5" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
     </LinearLayout>
 
 
@@ -67,6 +78,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:hint="Добавить заголовок"
+        android:maxLines="1"
         app:autoSizeMinTextSize="1sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toTopOf="@+id/appCompatButton"
@@ -94,7 +106,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.15"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintWidth_percent="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_name" />
+        app:layout_constraintTop_toBottomOf="@+id/event_name"
+        app:layout_constraintWidth_percent="0.5" />
 </androidx.constraintlayout.widget.ConstraintLayout>

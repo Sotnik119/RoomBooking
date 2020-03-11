@@ -28,12 +28,12 @@ class Event(
         return (startDate.time - Date().time).toInt() / 60000
     }
 
-    fun getEventDescription(timeFormat: Format): String {
+    fun getFormattedTime(timeFormat: Format): String {
         val format = if (timeFormat == Format.FORMAT_24H) format24 else format12
-        return "$name\n" +
-                "${startDate.toFormattedString(format)} - ${endDate.toFormattedString(format)}\n" +
-                owner
+        return "${startDate.toFormattedString(format)} - ${endDate.toFormattedString(format)}\n"
+//                owner
     }
+
 
     fun crossAnotherEvent(other: Event): Boolean {
 

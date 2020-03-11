@@ -1,12 +1,15 @@
 package com.donteco.roombooking
 
 import android.os.Bundle
+import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.donteco.roombookingfragment.MainViewModel
 import com.donteco.roombookingfragment.MainViewModelFactory
 import com.donteco.roombookingfragment.RoomBookingFragment
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,6 +35,48 @@ class MainActivity : AppCompatActivity() {
         frag = RoomBookingFragment.newInstance(orientation, true)
 
         supportFragmentManager.beginTransaction().replace(R.id.container, frag!!, "room").commit()
+
+        seekBarHoriz.setOnSeekBarChangeListener(
+            object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+                    if (p1 > 10) {
+                        val lp = container.layoutParams as ConstraintLayout.LayoutParams
+                        lp.matchConstraintPercentWidth = p1.toFloat() / 100
+                        container.layoutParams = lp
+                    }
+                }
+
+                override fun onStartTrackingTouch(p0: SeekBar?) {
+
+                }
+
+                override fun onStopTrackingTouch(p0: SeekBar?) {
+
+                }
+
+            }
+        )
+
+        seekBarVert.setOnSeekBarChangeListener(
+            object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+                    if (p1 > 10) {
+                        val lp = container.layoutParams as ConstraintLayout.LayoutParams
+                        lp.matchConstraintPercentHeight = p1.toFloat() / 100
+                        container.layoutParams = lp
+                    }
+                }
+
+                override fun onStartTrackingTouch(p0: SeekBar?) {
+
+                }
+
+                override fun onStopTrackingTouch(p0: SeekBar?) {
+
+                }
+
+            }
+        )
     }
 
 //    override fun onDestroy() {

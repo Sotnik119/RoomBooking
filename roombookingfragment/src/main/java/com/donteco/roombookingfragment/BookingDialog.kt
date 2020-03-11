@@ -6,6 +6,7 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.tabs.TabLayout
@@ -131,11 +132,17 @@ class BookingDialog : DialogFragment() {
             .cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme123))
         val layout =
             myInflater.inflate(R.layout.manage_future, layout.frame, true)
+
+        val numberPickersTextSize = this@BookingDialog.layout.measuredHeight.toFloat() / 22
+        val numberPickerDividerColor = ResourcesCompat.getColor(resources, R.color.numberpicker_divider, null)
         layout.chooser_day.apply {
             val names = arrayOf("Сегодня", "Завтра")
+            dividerColor = numberPickerDividerColor
             minValue = 1
             maxValue = names.size
             displayedValues = names
+            textSize = numberPickersTextSize
+            selectedTextSize = numberPickersTextSize
         }
 
         layout.chooser_hour.apply {
@@ -149,24 +156,33 @@ class BookingDialog : DialogFragment() {
                     )
                 )
             }
+            dividerColor = numberPickerDividerColor
             minValue = 0
             maxValue = 23
             displayedValues = names.toTypedArray()
             value = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1
+            textSize = numberPickersTextSize
+            selectedTextSize = numberPickersTextSize
         }
 
         layout.chooser_minute.apply {
             val names = arrayOf("00", "15", "30", "45")
+            dividerColor = numberPickerDividerColor
             minValue = 0
-            maxValue = 3
+            maxValue = names.size - 1
             displayedValues = names
+            textSize = numberPickersTextSize
+            selectedTextSize = numberPickersTextSize
         }
 
         layout.chooser_length.apply {
             val names = arrayOf("15 мин", "30 мин", "45 мин", "1 час")
+            dividerColor = numberPickerDividerColor
             minValue = 1
             maxValue = names.size
             displayedValues = names
+            textSize = numberPickersTextSize
+            selectedTextSize = numberPickersTextSize
         }
 
         layout.appCompatButton.setOnClickListener {
