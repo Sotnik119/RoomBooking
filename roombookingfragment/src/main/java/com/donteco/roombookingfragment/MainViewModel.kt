@@ -1,6 +1,7 @@
 package com.donteco.roombookingfragment
 
 import android.graphics.Color
+import android.widget.EditText
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import java.text.SimpleDateFormat
@@ -14,6 +15,7 @@ class MainViewModel(
 ) : ViewModel() {
 
     lateinit var widgetOrientation: RoomBookingFragment.Orientation
+    var dontShowAndroidKeyboard = false
 
     val roomName = MutableLiveData<String>().apply { postValue(config.roomName) }
 
@@ -97,6 +99,7 @@ class MainViewModel(
             update()
         }
         _fontColor.postValue(config.fontColor)
+        dontShowAndroidKeyboard = config.dontShowAndroidKeyboard
     }
 
     //Updating state
@@ -160,7 +163,7 @@ class MainViewModel(
             if (minutes in 11..19) {
                 "$minutes минут"
             } else {
-                val word = when (minutes%10) {
+                val word = when (minutes % 10) {
                     1 -> "минуту"
                     in 2..4 -> "минуты"
                     else -> "минут"
@@ -243,7 +246,8 @@ class MainViewModel(
         val fontColor: Int,
         val leftTransparent: Int,
         val rightTransparent: Int,
-        val timeFormat: Format
+        val timeFormat: Format,
+        val dontShowAndroidKeyboard: Boolean
     ) {
         companion object {
             fun getDefault() = Config(
@@ -255,9 +259,19 @@ class MainViewModel(
                 Color.WHITE,
                 40,
                 60,
-                Format.FORMAT_24H
+                Format.FORMAT_24H,
+                false
             )
         }
+    }
+
+
+    //keyboard features
+    var keyboardWrapper: IKeyboardWrapper? = null
+
+    interface IKeyboardWrapper {
+        fun onEnterEventNameClicked(fromTopToFieldBottom: Float, editText: EditText)
+        fun onBookDialogClose()
     }
 }
 

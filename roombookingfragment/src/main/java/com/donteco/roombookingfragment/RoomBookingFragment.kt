@@ -37,6 +37,7 @@ class RoomBookingFragment : Fragment(), IClosable {
 
     private lateinit var layout: View
     private lateinit var loading: View
+    private lateinit var viewModel :MainViewModel
 
     var currentDialogFragment: Fragment? = null
     override fun onCreateView(
@@ -54,7 +55,7 @@ class RoomBookingFragment : Fragment(), IClosable {
             visibility = View.GONE
         }
 
-        val viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
+        viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
 //            ViewModelProviders.of(activity!!, MainViewModelFactory(repo)).get(MainViewModel::class.java)
 
         viewModel.widgetOrientation = orientation
@@ -174,6 +175,7 @@ class RoomBookingFragment : Fragment(), IClosable {
                 commit()
             }
         }
+        viewModel.keyboardWrapper?.onBookDialogClose()
     }
 
 //    fun sendColorBroadcast(color: Int) {

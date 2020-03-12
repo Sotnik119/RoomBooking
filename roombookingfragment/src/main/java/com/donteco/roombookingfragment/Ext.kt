@@ -1,6 +1,8 @@
 package com.donteco.roombookingfragment
 
 import android.graphics.Color
+import android.view.View
+import android.view.ViewGroup
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -39,4 +41,23 @@ fun Int.setAlpha(alphaPercent: Int): Int {
         Color.green(this),
         Color.blue(this)
     )
+}
+
+fun View.getScreenPositionY(): Int {
+    var summ = this.y
+    var parent = this.parent as ViewGroup
+
+    while (parent.id != R.id.dialog) {
+        summ += parent.y
+        parent = parent.parent as ViewGroup
+    }
+
+    return summ.toInt()
+}
+
+
+fun View.getScreenPositionX(): Int {
+    val location = IntArray(2)
+    this.getLocationOnScreen(location)
+    return location[0]
 }

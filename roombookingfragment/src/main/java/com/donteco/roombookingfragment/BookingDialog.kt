@@ -2,10 +2,7 @@ package com.donteco.roombookingfragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.ContextThemeWrapper
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
@@ -133,8 +130,26 @@ class BookingDialog : DialogFragment() {
         val layout =
             myInflater.inflate(R.layout.manage_future, layout.frame, true)
 
+        if (viewModel.dontShowAndroidKeyboard) {
+            layout.event_name.isFocusable = false
+        }
+
+        layout.event_name.setOnTouchListener { view, event ->
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                val fromTopToFieldBottom =
+                    layout.event_name.getScreenPositionY().toFloat() + layout.event_name.height
+                viewModel.keyboardWrapper?.onEnterEventNameClicked(
+                    fromTopToFieldBottom,
+                    layout.event_name
+                )
+            }
+            false
+        }
+
         val numberPickersTextSize = this@BookingDialog.layout.measuredHeight.toFloat() / 22
-        val numberPickerDividerColor = ResourcesCompat.getColor(resources, R.color.numberpicker_divider, null)
+        val numberPickerDividerColor =
+            ResourcesCompat.getColor(resources, R.color.numberpicker_divider, null)
+
         layout.chooser_day.apply {
             val names = arrayOf("Сегодня", "Завтра")
             dividerColor = numberPickerDividerColor
