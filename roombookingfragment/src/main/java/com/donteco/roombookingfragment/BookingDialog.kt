@@ -98,6 +98,7 @@ class BookingDialog : DialogFragment() {
 
     @SuppressLint("SetTextI18n")
     private fun inflateFirstTabPrepare() {
+        viewModel.keyboardWrapper?.onBookDialogClose()
         val myInflater = LayoutInflater.from(activity)
             .cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme123))
         val buttonLayout = myInflater.inflate(
@@ -245,6 +246,7 @@ class BookingDialog : DialogFragment() {
 
     @SuppressLint("SetTextI18n")
     private fun inflateFirstTabManage() {
+        viewModel.keyboardWrapper?.onBookDialogClose()
         val myInflater = LayoutInflater.from(activity)
             .cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme123))
         val buttonLayout = myInflater.inflate(
