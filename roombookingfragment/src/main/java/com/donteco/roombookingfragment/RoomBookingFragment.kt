@@ -12,7 +12,7 @@ import androidx.core.animation.doOnEnd
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.activity_main_land.view.*
 import kotlinx.android.synthetic.main.info_message.view.*
 import kotlinx.android.synthetic.main.room_status.view.*
@@ -37,7 +37,7 @@ class RoomBookingFragment : Fragment(), IClosable {
 
     private lateinit var layout: View
     private lateinit var loading: View
-    private lateinit var viewModel :MainViewModel
+    private lateinit var viewModel: MainViewModel
 
     var currentDialogFragment: Fragment? = null
     override fun onCreateView(
@@ -55,7 +55,7 @@ class RoomBookingFragment : Fragment(), IClosable {
             visibility = View.GONE
         }
 
-        viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
 //            ViewModelProviders.of(activity!!, MainViewModelFactory(repo)).get(MainViewModel::class.java)
 
         viewModel.widgetOrientation = orientation
@@ -65,35 +65,45 @@ class RoomBookingFragment : Fragment(), IClosable {
             Orientation.HORIZONTAL -> LinearLayout.HORIZONTAL
         }
 
-        viewModel.mainColorLeft.observe(this, Observer {
+        viewModel.status.observe(viewLifecycleOwner, Observer {
+            if (it == MainViewModel.Status.STATUS_UNKNOWN) {
+                layout.btn_calendar.visibility = View.GONE
+                layout.btn_book_room.visibility = View.GONE
+            } else {
+                layout.btn_calendar.visibility = View.VISIBLE
+                layout.btn_book_room.visibility = View.VISIBLE
+            }
+        })
+
+        viewModel.mainColorLeft.observe(viewLifecycleOwner, Observer {
             layout.room_status.setBackgroundColor(it)
         })
 
-        viewModel.mainColorRight.observe(this, Observer {
+        viewModel.mainColorRight.observe(viewLifecycleOwner, Observer {
             layout.room_time.setBackgroundColor(it)
         })
 
-        viewModel.roomName.observe(this, Observer {
+        viewModel.roomName.observe(viewLifecycleOwner, Observer {
             layout.room_name.text = it
         })
 
-        viewModel.time.observe(this, Observer {
+        viewModel.time.observe(viewLifecycleOwner, Observer {
             layout.time.text = it
         })
 
-        viewModel.roomText.observe(this, Observer {
+        viewModel.roomText.observe(viewLifecycleOwner, Observer {
             layout.status.text = it
         })
 
-        viewModel.bookButtonText.observe(this, Observer {
+        viewModel.bookButtonText.observe(viewLifecycleOwner, Observer {
             layout.btn_book_room.text = it
         })
 
-        viewModel.mainColor.observe(this, Observer {
+        viewModel.mainColor.observe(viewLifecycleOwner, Observer {
             layout.btn_book_room.setBackgroundColor(it)
         })
 
-        viewModel.fontColor.observe(this, Observer {
+        viewModel.fontColor.observe(viewLifecycleOwner, Observer {
             layout.btn_book_room.setTextColor(it)
             layout.status.setTextColor(it)
             layout.time.setTextColor(it)
@@ -101,7 +111,7 @@ class RoomBookingFragment : Fragment(), IClosable {
             layout.btn_calendar.setColorFilter(it)
         })
 
-        viewModel.messages.observe(this, Observer {
+        viewModel.messages.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 showMessage(it.type, it.header, it.text)
                 viewModel.messages.postValue(null)
@@ -114,7 +124,8 @@ class RoomBookingFragment : Fragment(), IClosable {
         }
 
         layout.btn_calendar.setOnClickListener {
-            val rowsize = (if(layout.measuredHeight > layout.measuredWidth) layout.measuredWidth else layout.measuredHeight) / 9
+            val rowsize =
+                (if (layout.measuredHeight > layout.measuredWidth) layout.measuredWidth else layout.measuredHeight) / 9
             val dialogFragment =
                 DayViewDialog.newInstance(rowsize)
             if (useCustomDialogs) {
@@ -157,7 +168,7 @@ class RoomBookingFragment : Fragment(), IClosable {
             )
         )
 
-        viewModel.loading.observe(this, Observer {
+        viewModel.loading.observe(viewLifecycleOwner, Observer {
             showLoading(it.type, it.header, it.text)
         })
         return layout

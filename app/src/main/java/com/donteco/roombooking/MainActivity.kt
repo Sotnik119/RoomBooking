@@ -5,7 +5,8 @@ import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
+import com.donteco.roombookingfragment.BaseEventRepository
 import com.donteco.roombookingfragment.MainViewModel
 import com.donteco.roombookingfragment.MainViewModelFactory
 import com.donteco.roombookingfragment.RoomBookingFragment
@@ -25,12 +26,13 @@ class MainActivity : AppCompatActivity() {
             2 -> RoomBookingFragment.Orientation.HORIZONTAL
             else -> RoomBookingFragment.Orientation.HORIZONTAL
         }
+
+        val repo = BaseEventRepository()
         val model =
-            ViewModelProviders.of(this, MainViewModelFactory(null, null)).get(
+            ViewModelProvider(this, MainViewModelFactory(repo, null)).get(
                 MainViewModel::class.java
             )
-
-        model.roomName.postValue("Переговорка 2")
+        model.errorText = "Ошибочка"
 
         frag = RoomBookingFragment.newInstance(orientation, true)
 
@@ -77,6 +79,10 @@ class MainActivity : AppCompatActivity() {
 
             }
         )
+
+        mCheckbox.setOnCheckedChangeListener { _, b ->
+            repo.error = b
+        }
     }
 
 //    override fun onDestroy() {

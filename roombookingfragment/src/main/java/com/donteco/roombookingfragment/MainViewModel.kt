@@ -17,25 +17,45 @@ class MainViewModel(
     lateinit var widgetOrientation: RoomBookingFragment.Orientation
     var dontShowAndroidKeyboard = false
 
-    val roomName = MutableLiveData<String>().apply { postValue(config.roomName) }
+    private var isErrorState = false
+
+    val roomName = repo.getRoomName()
 
     private val currentEvent: MutableLiveData<Event?> = MutableLiveData()
 
-    private val _status: MutableLiveData<Status> = MutableLiveData()
-    val status: LiveData<Status>
-        get() = _status
+    val status: LiveData<Status> = currentEvent.map {
+        if (isErrorState) {
+            Status.STATUS_UNKNOWN
+        } else if (it != null) {
+            if (it.isEventTakesPlaceNow()) {
+                Status.STATUS_OCCUPIED
+            } else {
+                if (it.getRemainedTime() < 15) {
+                    Status.STATUS_WAIT
+                } else {
+                    Status.STATUS_AVAILABLE
+                }
+            }
+        } else {
+            Status.STATUS_AVAILABLE
+        }
+    }
 
-    private val _mainColor: MutableLiveData<Int> = MutableLiveData()
-    val mainColor: LiveData<Int>
-        get() = _mainColor
-    val mainColorLeft: LiveData<Int>
-        get() = Transformations.map(_mainColor) {
-            it.setAlpha(100 - config.leftTransparent)
+    val mainColor: LiveData<Int> = status.map {
+        when (it) {
+            Status.STATUS_AVAILABLE -> config.freeColor
+            Status.STATUS_OCCUPIED -> config.busyColor
+            Status.STATUS_WAIT -> config.willBusyColor
+            else -> config.connectError
         }
-    val mainColorRight: LiveData<Int>
-        get() = Transformations.map(_mainColor) {
-            it.setAlpha(100 - config.rightTransparent)
-        }
+    }
+
+    val mainColorLeft: LiveData<Int> = mainColor.map {
+        it.setAlpha(100 - config.leftTransparent)
+    }
+    val mainColorRight: LiveData<Int> = mainColor.map {
+        it.setAlpha(100 - config.rightTransparent)
+    }
 
     private val _time: MutableLiveData<String> = MutableLiveData()
     val time: LiveData<String>
@@ -45,39 +65,46 @@ class MainViewModel(
     val fontColor: LiveData<Int>
         get() = _fontColor
 
-    private val _roomText: MutableLiveData<String> = MutableLiveData()
-    val roomText: LiveData<String>
-        get() = _roomText
+    var errorText = ""
 
-
-    val bookButtonText: LiveData<String>
-        get() = Transformations.map(status) {
-            if (it != Status.STATUS_OCCUPIED) {
-                "Забронироваь зал"
-            } else {
-                "Управление"
-            }
+    val roomText: LiveData<String> = status.map {
+        when (it) {
+            Status.STATUS_AVAILABLE -> "\nДоступно\n"
+            Status.STATUS_OCCUPIED -> currentEvent.value?.toString() ?: ""
+            Status.STATUS_WAIT -> "Доступно на ${getTextForMinutes(
+                currentEvent.value?.getRemainedTime() ?: 0
+            )}"
+            else -> "\n$errorText\n"
         }
+    }
+
+
+    val bookButtonText: LiveData<String> = status.map {
+        if (it != Status.STATUS_OCCUPIED) {
+            "Забронироваь зал"
+        } else {
+            "Управление"
+        }
+    }
 
     val timeFormat = MutableLiveData<Format>().apply { postValue(config.timeFormat) }
 
     val filterDate = MutableLiveData<Date>().apply { postValue(Date().atStartOfDay()) }
-    val filteredEvents: LiveData<Array<Event>>
-        get() = Transformations.switchMap(filterDate) { date ->
-            Transformations.switchMap(eventList) {
-                val filtered = MutableLiveData<Array<Event>>()
-                filtered.postValue(it.filter {
-                    date.atStartOfDay().before(it.startDate) && date.atEndOfDay().after(
-                        it.endDate
-                    )
-                }
-                    .toTypedArray())
-                filtered
+    val filteredEvents: LiveData<Array<Event>> = filterDate.switchMap { date ->
+        eventList.switchMap {
+            val filtered = MutableLiveData<Array<Event>>()
+            filtered.postValue(it?.filter {
+                date.atStartOfDay().before(it.startDate) && date.atEndOfDay().after(
+                    it.endDate
+                )
             }
+                ?.toTypedArray())
+            filtered
         }
+    }
 
     val eventList = repo.getEventsLive()
-    private val repoObserver = Observer<Array<Event>> {
+    private val repoObserver = Observer<Array<Event>?> {
         setEvents(it)
     }
 
@@ -85,8 +112,6 @@ class MainViewModel(
     val loading = repo.getLoadingState()
 
     init {
-        setStatus(Status.STATUS_UNKNOWN)
-
         eventList.observeForever(repoObserver)
 
         fixedRateTimer("Time", true, 2000, 5000) {
@@ -105,57 +130,26 @@ class MainViewModel(
     //Updating state
     private fun update() {
         val closest = findClosestEvent()
-        if (closest != null) {
-            currentEvent.postValue(closest)
-            if (closest.isEventTakesPlaceNow()) {
-                setStatus(Status.STATUS_OCCUPIED)
-            } else {
-                if (closest.getRemainedTime() < 15) {
-                    setStatus(Status.STATUS_WAIT)
-                } else {
-                    setStatus(Status.STATUS_AVAILABLE)
-                }
-            }
-        } else {
-            setStatus(Status.STATUS_AVAILABLE)
-        }
-
-
+        currentEvent.postValue(closest)
     }
 
-    private var events = repo.getEvents()
+    private var events = eventList.value
 
-    private fun setEvents(eventsq: Array<Event>) {
-        events = eventsq
-        update()
+    private fun setEvents(events: Array<Event>?) {
+        if (events != null) {
+            this.events = events
+            isErrorState = false
+            update()
+        } else {
+            isErrorState = true
+        }
+
     }
 
     private fun findClosestEvent(): Event? {
-        return events.sortedBy { it.startDate }.firstOrNull {
+        return eventList.value?.sortedBy { it.startDate }?.firstOrNull {
             (Date().after(it.startDate) && Date().before(it.endDate)) || it.startDate.after(Date())
         }
-    }
-
-    private fun setStatus(newStatus: Status) {
-        _status.postValue(newStatus)
-        _mainColor.postValue(
-            when (newStatus) {
-                Status.STATUS_AVAILABLE -> config.freeColor
-                Status.STATUS_OCCUPIED -> config.busyColor
-                Status.STATUS_WAIT -> config.willBusyColor
-                else -> config.connectError
-            }
-        )
-        _roomText.postValue(
-            when (newStatus) {
-                Status.STATUS_AVAILABLE -> "\nДоступно\n"
-                Status.STATUS_OCCUPIED -> currentEvent.value?.toString()
-                Status.STATUS_WAIT -> "Доступно на ${getTextForMinutes(
-                    currentEvent.value?.getRemainedTime() ?: 0
-                )}"
-                else -> "\nНет связи с сервером\n"
-            }
-        )
     }
 
     private fun getTextForMinutes(minutes: Int): String {

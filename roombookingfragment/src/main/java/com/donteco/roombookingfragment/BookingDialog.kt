@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.dialog_booking.view.*
 import kotlinx.android.synthetic.main.manage_current_landscape.view.*
@@ -31,14 +31,14 @@ class BookingDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
         val myInflater = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme123))
         layout = myInflater.inflate(R.layout.dialog_booking, container, false)
 
-        viewModel.mainColor.observe(this, androidx.lifecycle.Observer {
+        viewModel.mainColor.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             layout.head_layout.setBackgroundColor(it)
         })
-        viewModel.fontColor.observe(this, androidx.lifecycle.Observer {
+        viewModel.fontColor.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             layout.head_text.setTextColor(it)
         })
 

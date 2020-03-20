@@ -79,6 +79,7 @@
         android:gravity="center"
         android:hint="Добавить заголовок"
         android:maxLines="1"
+        android:singleLine="true"
         app:autoSizeMinTextSize="1sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toTopOf="@+id/appCompatButton"

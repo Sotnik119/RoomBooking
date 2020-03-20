@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.dialog_events.view.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -31,7 +31,7 @@ class DayViewDialog : DialogFragment() {
 
         val myInflater = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme123))
         val layout = myInflater.inflate(R.layout.dialog_events, container, false)
-        val viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
+        val viewModel = ViewModelProvider(activity!!).get(MainViewModel::class.java)
 
 
         layout.day_view.setRowSize(rowSize)
@@ -39,31 +39,31 @@ class DayViewDialog : DialogFragment() {
 
         viewModel.filterDate.postValue(Date())
 
-        viewModel.mainColor.observe(this, Observer {
+        viewModel.mainColor.observe(viewLifecycleOwner, Observer {
             layout.header.setBackgroundColor(it)
         })
 
-        viewModel.timeFormat.observe(this, Observer {
+        viewModel.timeFormat.observe(viewLifecycleOwner, Observer {
             layout.day_view.format = it
         })
 
-        viewModel.fontColor.observe(this, Observer {
+        viewModel.fontColor.observe(viewLifecycleOwner, Observer {
             layout.date_text.setTextColor(it)
             layout.prev_day.setColorFilter(it)
             layout.next_day.setColorFilter(it)
         })
 
-        viewModel.filterDate.observe(this, Observer {
+        viewModel.filterDate.observe(viewLifecycleOwner, Observer {
             layout.date_text.text =
                 it.toFormattedString(SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()))
             if (it.atStartOfDay().time == Date().atStartOfDay().time) layout.day_view.drawCurrentTimeLine() else layout.day_view.removeCurrentTimeLine()
         })
 
-        viewModel.filteredEvents.observe(this, Observer {
+        viewModel.filteredEvents.observe(viewLifecycleOwner, Observer {
             layout.day_view.setEvents(it)
         })
 
-        viewModel.roomName.observe(this, Observer {
+        viewModel.roomName.observe(viewLifecycleOwner, Observer {
             layout.day_view.roomName = it
         })
 
