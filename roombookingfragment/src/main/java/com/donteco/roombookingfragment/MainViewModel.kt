@@ -81,7 +81,7 @@ class MainViewModel(
 
     val bookButtonText: LiveData<String> = status.map {
         if (it != Status.STATUS_OCCUPIED) {
-            "Забронироваь зал"
+            "Забронировать зал"
         } else {
             "Управление"
         }
