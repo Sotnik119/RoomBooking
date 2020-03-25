@@ -190,25 +190,19 @@ class MainViewModel(
             set(Calendar.MILLISECOND, 0)
         }
         val event = Event(timeStart.time, timeEnd.time, name, "")
-        if (repo.addEvent(event)) {
-            //todo: show success
-        } else {
-            //todo: show error?
-        }
+        repo.addEvent(event)
     }
 
     fun closeEvent() {
-        val event = currentEvent.value?.apply { endDate = Date() }
+        val event = currentEvent.value?.copy(endDate = Date())
         event?.also {
-            if (repo.updateEvent(event)) {
-
-            }
+           repo.updateEvent(event)
         }
 
     }
 
     fun extendEvent(length: Int) {
-        val event = currentEvent.value
+        val event = currentEvent.value?.copy()
         event?.apply {
             val timeEnd = Calendar.getInstance()
             timeEnd.time = this.endDate
@@ -216,11 +210,7 @@ class MainViewModel(
             endDate = timeEnd.time
         }
         event?.also {
-            if (repo.updateEvent(event)) {
-                //todo
-            } else {
-                //todo
-            }
+           repo.updateEvent(event)
         }
     }
 

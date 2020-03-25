@@ -3,7 +3,7 @@ package com.donteco.roombookingfragment
 import java.text.SimpleDateFormat
 import java.util.*
 
-class Event(
+data class Event(
     val startDate: Date,
     var endDate: Date,
     val name: String,

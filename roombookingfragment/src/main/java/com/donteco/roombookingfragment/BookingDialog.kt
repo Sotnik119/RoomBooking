@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.dialog_booking.view.*
 import kotlinx.android.synthetic.main.manage_current_landscape.view.*
 import kotlinx.android.synthetic.main.manage_future.view.*
 import java.util.*
+import kotlin.math.min
 
 class BookingDialog : DialogFragment() {
     companion object {
@@ -67,9 +68,10 @@ class BookingDialog : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
+        val x = min(resources.displayMetrics.widthPixels, resources.displayMetrics.heightPixels) * 0.9f
         dialog?.window?.setLayout(
-            (resources.displayMetrics.widthPixels * 0.6f).toInt(),
-            (resources.displayMetrics.heightPixels * 0.8f).toInt()
+            x.toInt(),
+            x.toInt()
         )
     }
 
@@ -137,12 +139,19 @@ class BookingDialog : DialogFragment() {
 
         layout.event_name.setOnTouchListener { view, event ->
             if (event.getAction() == MotionEvent.ACTION_UP) {
-                val fromTopToFieldBottom =
-                    layout.event_name.getScreenPositionY().toFloat() + layout.event_name.height
-                viewModel.keyboardWrapper?.onEnterEventNameClicked(
-                    fromTopToFieldBottom,
-                    layout.event_name
-                )
+                var fromTopToFieldBottom = 0F
+                try {
+                    fromTopToFieldBottom =
+                        layout.event_name.getScreenPositionY().toFloat() + layout.event_name.height
+                } catch (e: Exception) {
+
+                } finally {
+                    viewModel.keyboardWrapper?.onEnterEventNameClicked(
+                        fromTopToFieldBottom,
+                        layout.event_name
+                    )
+                }
+
             }
             false
         }

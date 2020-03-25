@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.dialog_events.view.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.min
 
 
 class DayViewDialog : DialogFragment() {
@@ -56,7 +57,13 @@ class DayViewDialog : DialogFragment() {
         viewModel.filterDate.observe(viewLifecycleOwner, Observer {
             layout.date_text.text =
                 it.toFormattedString(SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()))
-            if (it.atStartOfDay().time == Date().atStartOfDay().time) layout.day_view.drawCurrentTimeLine() else layout.day_view.removeCurrentTimeLine()
+            if (it.atStartOfDay().time == Date().atStartOfDay().time) {
+                layout.day_view.drawCurrentTimeLine()
+                layout.prev_day.visibility = View.GONE
+            } else {
+                layout.day_view.removeCurrentTimeLine()
+                layout.prev_day.visibility = View.VISIBLE
+            }
         })
 
         viewModel.filteredEvents.observe(viewLifecycleOwner, Observer {
@@ -80,5 +87,15 @@ class DayViewDialog : DialogFragment() {
             viewModel.filterDate.postValue(c.time)
         }
         return layout
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val x =
+            min(resources.displayMetrics.widthPixels, resources.displayMetrics.heightPixels) * 0.9f
+        dialog?.window?.setLayout(
+            x.toInt(),
+            x.toInt()
+        )
     }
 }

@@ -124,8 +124,11 @@ class RoomBookingFragment : Fragment(), IClosable {
         }
 
         layout.btn_calendar.setOnClickListener {
-            val rowsize =
-                (if (layout.measuredHeight > layout.measuredWidth) layout.measuredWidth else layout.measuredHeight) / 9
+            val h =
+                if (useCustomDialogs) layout.measuredHeight else layout.rootView.measuredHeight
+            val w =
+                if (useCustomDialogs) layout.measuredWidth else layout.rootView.measuredWidth
+            val rowsize = (if (h > w) w else h) / 9
             val dialogFragment =
                 DayViewDialog.newInstance(rowsize)
             if (useCustomDialogs) {
@@ -216,6 +219,8 @@ class RoomBookingFragment : Fragment(), IClosable {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
         )
+        layout.isFocusable = true
+        layout.isClickable = true
 
         val animationShow = ObjectAnimator.ofFloat(layout, View.ALPHA, 0f, 1f).apply {
             duration = 500
@@ -241,6 +246,8 @@ class RoomBookingFragment : Fragment(), IClosable {
                 message_text.text = text
                 alpha = 0f
                 visibility = View.VISIBLE
+                loading.isFocusable = true
+                loading.isClickable = true
             }
             currentAnimation = ObjectAnimator.ofFloat(loading, View.ALPHA, 0f, 1f).apply {
                 duration = 500
@@ -250,6 +257,8 @@ class RoomBookingFragment : Fragment(), IClosable {
             currentAnimation = ObjectAnimator.ofFloat(loading, View.ALPHA, 1f, 0f).apply {
                 duration = 500
             }
+            loading.isFocusable = false
+            loading.isClickable = false
             currentAnimation?.start()
         }
     }

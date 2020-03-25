@@ -2,6 +2,7 @@ package com.donteco.roombookingfragment
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -98,12 +99,12 @@ class DayView @JvmOverloads constructor(
 
             val textsize = _rowSize.toFloat() / 4.5f
             if (height >= _rowSize) {
-                item.event_room.textSize = textsize
+                item.event_room.setTextSize(TypedValue.COMPLEX_UNIT_PX, textsize)
                 item.event_room.text = roomName
             }
             if (height >= _rowSize / 2) {
-                item.event_name.textSize = textsize
-                item.event_time.textSize = textsize
+                item.event_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, textsize)
+                item.event_time.setTextSize(TypedValue.COMPLEX_UNIT_PX, textsize)
                 item.event_name.text = it.name
                 item.event_time.text = it.getFormattedTime(format)
 
