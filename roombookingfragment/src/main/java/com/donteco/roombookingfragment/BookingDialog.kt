@@ -43,17 +43,6 @@ class BookingDialog : DialogFragment() {
             layout.head_text.setTextColor(it)
         })
 
-//        if (viewModel.widgetOrientation == RoomBookingFragment.Orientation.VERTICAL) {
-//            layout.head_layout.layoutParams =
-//                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
-//            layout.tab_layout.layoutParams =
-//                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
-//            layout.frame.layoutParams =
-//                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 9f)
-//            layout.body.layoutParams =
-//                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 9f)
-//        }
-
         when (mode) {
             Mode.BOOK -> {
                 prepareBook()
@@ -108,11 +97,6 @@ class BookingDialog : DialogFragment() {
             layout.frame,
             true
         )
-//            myInflater.inflate(
-//                if (viewModel.widgetOrientation == RoomBookingFragment.Orientation.VERTICAL) R.layout.manage_current_portrait else R.layout.manage_current_landscape,
-//                layout.frame,
-//                true
-//            )
         buttonLayout.button1.apply {
             text = "15 мин"
             setOnClickListener { bookNow(15) }
@@ -233,7 +217,7 @@ class BookingDialog : DialogFragment() {
     private fun prepareManage() {
         layout.head_text.text = "Управление"
         val tab1 = layout.tab_layout.newTab().apply { text = "Текущая встреча" }
-        val tab2 = layout.tab_layout.newTab().apply { text = "Новая встеча" }
+        val tab2 = layout.tab_layout.newTab().apply { text = "Новая встреча" }
         layout.tab_layout.addTab(tab1)
         layout.tab_layout.addTab(tab2)
         inflateFirstTabManage()
@@ -263,11 +247,6 @@ class BookingDialog : DialogFragment() {
             layout.frame,
             true
         )
-//            myInflater.inflate(
-//                if (viewModel.widgetOrientation == RoomBookingFragment.Orientation.VERTICAL) R.layout.manage_current_portrait else R.layout.manage_current_landscape,
-//                layout.frame,
-//                true
-//            )
         buttonLayout.button1.apply {
             text = "Завершить"
             setOnClickListener { close() }

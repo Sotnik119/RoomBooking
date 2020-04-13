@@ -2,6 +2,7 @@ package com.donteco.roombooking
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity() {
             )
         model.errorText = "Ошибочка"
 
-        frag = RoomBookingFragment.newInstance(orientation, true)
+        frag = RoomBookingFragment.newInstance(orientation, true, root)
 
         supportFragmentManager.beginTransaction().replace(R.id.container, frag!!, "room").commit()
 
@@ -86,6 +87,12 @@ class MainActivity : AppCompatActivity() {
             repo.error = b
         }
 
+        interaction_layer.setOnTouchListener { _, _ ->
+
+            Log.d("RoomBooking activity", "Interaction layer touched")
+            return@setOnTouchListener false
+        }
+
         hideSystemUI()
     }
 
@@ -93,6 +100,8 @@ class MainActivity : AppCompatActivity() {
 //        super.onDestroy()
 //        supportFragmentManager.beginTransaction().remove(frag!!).commit()
 //    }
+
+
 }
 
 fun Activity.hideSystemUI() {

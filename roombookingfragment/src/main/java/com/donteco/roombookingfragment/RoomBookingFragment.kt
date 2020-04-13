@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.activity_main_land.view.*
+import kotlinx.android.synthetic.main.dialog_frame_layout.view.*
 import kotlinx.android.synthetic.main.info_message.view.*
 import kotlinx.android.synthetic.main.room_status.view.*
 import kotlinx.android.synthetic.main.room_time.view.*
@@ -27,17 +28,21 @@ class RoomBookingFragment : Fragment(), IClosable {
     companion object {
         fun newInstance(
             orientation: Orientation,
-            customDialogs: Boolean
+            customDialogs: Boolean,
+            customDialogRoot: ViewGroup
         ) =
             RoomBookingFragment().apply {
                 this.orientation = orientation
                 this.useCustomDialogs = customDialogs
+                this.customDialogRoot = customDialogRoot
             }
     }
 
     private lateinit var layout: View
     private lateinit var loading: View
+    private lateinit var dialogView: View
     private lateinit var viewModel: MainViewModel
+    lateinit var customDialogRoot: ViewGroup
 
     var currentDialogFragment: Fragment? = null
     override fun onCreateView(
@@ -118,22 +123,29 @@ class RoomBookingFragment : Fragment(), IClosable {
             }
         })
 
-        layout.dialog.setOnTouchListener { _, _ ->
+        dialogView = myInflater.inflate(R.layout.dialog_frame_layout, null)
+
+        dialogView.dialog.setOnTouchListener { _, _ ->
             close()
             false
         }
 
         layout.btn_calendar.setOnClickListener {
-            val h =
-                if (useCustomDialogs) layout.measuredHeight else layout.rootView.measuredHeight
-            val w =
-                if (useCustomDialogs) layout.measuredWidth else layout.rootView.measuredWidth
+            val h = customDialogRoot.measuredHeight
+            val w = customDialogRoot.measuredWidth
             val rowsize = (if (h > w) w else h) / 9
             val dialogFragment =
                 DayViewDialog.newInstance(rowsize)
             if (useCustomDialogs) {
-                layout.dialog.visibility = View.VISIBLE
+                dialogView.visibility = View.VISIBLE
                 currentDialogFragment = dialogFragment
+                customDialogRoot.addView(
+                    dialogView,
+                    ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                )
                 activity!!.supportFragmentManager.beginTransaction().apply {
                     setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     replace(R.id.dialog_frame, currentDialogFragment!!)
@@ -152,8 +164,15 @@ class RoomBookingFragment : Fragment(), IClosable {
             val dialogFragment =
                 BookingDialog.newInstance(mode, this)
             if (useCustomDialogs) {
-                layout.dialog.visibility = View.VISIBLE
+                dialogView.visibility = View.VISIBLE
                 currentDialogFragment = dialogFragment
+                customDialogRoot.addView(
+                    dialogView,
+                    ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                )
                 activity!!.supportFragmentManager.beginTransaction().apply {
                     setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     replace(R.id.dialog_frame, currentDialogFragment!!)
@@ -182,24 +201,18 @@ class RoomBookingFragment : Fragment(), IClosable {
      * Close dialog
      */
     override fun close() {
-        layout.dialog.visibility = View.GONE
         if (currentDialogFragment != null) {
             activity!!.supportFragmentManager.beginTransaction().apply {
                 remove(currentDialogFragment!!)
                 commit()
             }
+            dialogView.visibility = View.GONE
+            dialogView.parent?.let {
+                (it as ViewGroup).removeView(dialogView)
+            }
         }
         viewModel.keyboardWrapper?.onBookDialogClose()
     }
-
-//    fun sendColorBroadcast(color: Int) {
-//        activity?.sendBroadcast(
-//            Intent("com.cubicmedia.action.LED_BAR_COLOR").setPackage("com.donteco.elcledcontroller")
-//                .putExtra("COLOR", color)
-//                .putExtra("BRIGHTNESS", 100)
-//        )
-//    }
-
 
     private fun showMessage(type: Boolean, headText: String, messageText: String) {
         val layout: View = LayoutInflater.from(context).inflate(R.layout.info_message, null)
@@ -262,7 +275,6 @@ class RoomBookingFragment : Fragment(), IClosable {
             currentAnimation?.start()
         }
     }
-
 
     enum class Orientation {
         VERTICAL,
