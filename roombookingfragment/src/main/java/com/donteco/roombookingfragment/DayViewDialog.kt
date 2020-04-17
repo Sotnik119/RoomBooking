@@ -67,7 +67,7 @@ class DayViewDialog : DialogFragment() {
         })
 
         viewModel.filteredEvents.observe(viewLifecycleOwner, Observer {
-            layout.day_view.setEvents(it)
+            layout.day_view.setEvents(it,viewModel.filterDate.value?:Date())
         })
 
         viewModel.roomName.observe(viewLifecycleOwner, Observer {

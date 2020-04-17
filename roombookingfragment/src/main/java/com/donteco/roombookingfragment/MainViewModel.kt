@@ -94,9 +94,9 @@ class MainViewModel(
         eventList.switchMap {
             val filtered = MutableLiveData<Array<Event>>()
             filtered.postValue(it?.filter {
-                date.atStartOfDay().before(it.startDate) && date.atEndOfDay().after(
-                    it.endDate
-                )
+                //                date.atStartOfDay().before(it.startDate) && date.atEndOfDay().after(it.endDate)
+                it.startDate.after(date.atStartOfDay()) && it.startDate.before(date.atEndOfDay()) ||
+                        it.endDate.after(date.atStartOfDay()) && it.endDate.before(date.atEndOfDay())
             }
                 ?.toTypedArray())
             filtered
@@ -196,7 +196,7 @@ class MainViewModel(
     fun closeEvent() {
         val event = currentEvent.value?.copy(endDate = Date())
         event?.also {
-           repo.updateEvent(event)
+            repo.updateEvent(event)
         }
 
     }
@@ -210,7 +210,7 @@ class MainViewModel(
             endDate = timeEnd.time
         }
         event?.also {
-           repo.updateEvent(event)
+            repo.updateEvent(event)
         }
     }
 

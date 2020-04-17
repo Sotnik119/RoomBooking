@@ -22,6 +22,7 @@ class DayView @JvmOverloads constructor(
     private val dayViewLayout = DayViewLayout(context)
     private var _rowSize = 160
     private val events = ArrayList<Event>()
+    private var currentDate = Date()
     private val drawedEvents = ArrayList<View>()
     private var currentTimeLine = LayoutInflater.from(context).inflate(R.layout.time_line, null)
     var roomName = ""
@@ -52,9 +53,10 @@ class DayView @JvmOverloads constructor(
     }
 
 
-    fun setEvents(events: Array<Event>) {
+    fun setEvents(events: Array<Event>, currentDate: Date) {
         this.events.clear()
         this.events.addAll(events)
+        this.currentDate = currentDate
         drawEvents()
     }
 
@@ -68,9 +70,10 @@ class DayView @JvmOverloads constructor(
 
     private fun drawEvents() {
         clearDrawledEvents()
+        val k = Calendar.getInstance()
         events.forEach {
             //get time
-            val k = Calendar.getInstance().apply { time = it.startDate }
+            k.time = it.startDate
             val sh = k.get(Calendar.HOUR_OF_DAY)
             val sm = k.get(Calendar.MINUTE)
 
@@ -79,8 +82,15 @@ class DayView @JvmOverloads constructor(
             val em = k.get(Calendar.MINUTE)
 
             //get start position
-            val startPos = (sh * _rowSize + _rowSize.toFloat() / 60 * sm) + _rowSize / 2
-            val endPos = (eh * _rowSize + _rowSize.toFloat() / 60 * em) + _rowSize / 2
+            var startPos = (sh * _rowSize + _rowSize.toFloat() / 60 * sm) + _rowSize / 2
+            var endPos = (eh * _rowSize + _rowSize.toFloat() / 60 * em) + _rowSize / 2
+
+            if (currentDate.atStartOfDay().after(it.startDate.atStartOfDay())) {
+                startPos = 0f
+            }
+            if (currentDate.atStartOfDay().before(it.endDate.atStartOfDay())) {
+                endPos = dayViewLayout.measuredHeight.toFloat()
+            }
 
             val height = endPos - startPos
 

@@ -129,31 +129,34 @@ class RoomBookingFragment : Fragment(), IClosable {
             close()
             false
         }
-
+        
         layout.btn_calendar.setOnClickListener {
-            val h = customDialogRoot.measuredHeight
-            val w = customDialogRoot.measuredWidth
-            val rowsize = (if (h > w) w else h) / 9
-            val dialogFragment =
-                DayViewDialog.newInstance(rowsize)
-            if (useCustomDialogs) {
-                dialogView.visibility = View.VISIBLE
-                currentDialogFragment = dialogFragment
-                customDialogRoot.addView(
-                    dialogView,
-                    ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
+                val h = customDialogRoot.measuredHeight
+                val w = customDialogRoot.measuredWidth
+                val rowsize = (if (h > w) w else h) / 9
+                val dialogFragment =
+                    DayViewDialog.newInstance(rowsize)
+                if (useCustomDialogs) {
+                    dialogView.visibility = View.VISIBLE
+                    currentDialogFragment = dialogFragment
+                    (dialogView.parent as ViewGroup?)?.removeView(
+                        dialogView
                     )
-                )
-                activity!!.supportFragmentManager.beginTransaction().apply {
-                    setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    replace(R.id.dialog_frame, currentDialogFragment!!)
-                    commit()
+                    customDialogRoot.addView(
+                        dialogView,
+                        ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                    )
+                    activity!!.supportFragmentManager.beginTransaction().apply {
+                        setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        replace(R.id.dialog_frame, currentDialogFragment!!)
+                        commit()
+                    }
+                } else {
+                    dialogFragment.show(activity!!.supportFragmentManager, "DayViewDialog")
                 }
-            } else {
-                dialogFragment.show(activity!!.supportFragmentManager, "DayViewDialog")
-            }
         }
 
 
