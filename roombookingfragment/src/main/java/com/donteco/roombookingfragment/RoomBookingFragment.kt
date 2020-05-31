@@ -3,10 +3,7 @@ package com.donteco.roombookingfragment
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.os.Bundle
-import android.view.ContextThemeWrapper
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.LinearLayout
 import androidx.core.animation.doOnEnd
 import androidx.fragment.app.Fragment
@@ -125,42 +122,62 @@ class RoomBookingFragment : Fragment(), IClosable {
 
         dialogView = myInflater.inflate(R.layout.dialog_frame_layout, null)
 
-        dialogView.dialog.setOnTouchListener { _, _ ->
-            close()
+        dialogView.dialog.setOnTouchListener { _, event ->
+            if (closeOnTouch && event.action == MotionEvent.ACTION_UP) close()
             false
         }
-        
-        layout.btn_calendar.setOnClickListener {
-                val h = customDialogRoot.measuredHeight
-                val w = customDialogRoot.measuredWidth
-                val rowsize = (if (h > w) w else h) / 9
-                val dialogFragment =
-                    DayViewDialog.newInstance(rowsize)
-                if (useCustomDialogs) {
-                    dialogView.visibility = View.VISIBLE
-                    currentDialogFragment = dialogFragment
-                    (dialogView.parent as ViewGroup?)?.removeView(
-                        dialogView
-                    )
-                    customDialogRoot.addView(
-                        dialogView,
-                        ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT
-                        )
-                    )
-                    activity!!.supportFragmentManager.beginTransaction().apply {
-                        setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        replace(R.id.dialog_frame, currentDialogFragment!!)
-                        commit()
+
+
+        layout.btn_calendar.setOnSingleClickListener {
+            closeOnTouch = false
+            val h = customDialogRoot.measuredHeight
+            val w = customDialogRoot.measuredWidth
+            val rowsize = (if (h > w) w else h) / 9
+            val dialogFragment =
+                DayViewDialog.newInstance(rowsize)
+            if (useCustomDialogs) {
+                dialogView.visibility = View.VISIBLE
+                currentDialogFragment = dialogFragment
+                (dialogView.parent as ViewGroup?)?.removeView(
+                    dialogView
+                )
+                dialogFragment.resumeCallback = object : DayViewDialog.Iresumed {
+                    override fun onResumed() {
+                        Log("fragment calendar resumed")
+                        closeOnTouch = true
                     }
-                } else {
-                    dialogFragment.show(activity!!.supportFragmentManager, "DayViewDialog")
+
                 }
+                customDialogRoot.addView(
+                    dialogView,
+                    ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                )
+                Log("Start transaction for open fragment")
+                try {
+                    activity!!.supportFragmentManager.let {
+                        it.beginTransaction().apply {
+                            setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                            replace(R.id.dialog_frame, currentDialogFragment!!)
+                            commit()
+                        }
+                        Log("End transaction for open fragment")
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Log("Error transaction for open fragment")
+                }
+
+            } else {
+                dialogFragment.show(activity!!.supportFragmentManager, "DayViewDialog")
+            }
         }
 
 
-        layout.btn_book_room.setOnClickListener {
+        layout.btn_book_room.setOnSingleClickListener {
+            closeOnTouch = false
             val mode =
                 if (viewModel.status.value == MainViewModel.Status.STATUS_OCCUPIED) BookingDialog.Mode.MANAGE else BookingDialog.Mode.BOOK
 
@@ -180,6 +197,7 @@ class RoomBookingFragment : Fragment(), IClosable {
                     setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     replace(R.id.dialog_frame, currentDialogFragment!!)
                     commit()
+                    closeOnTouch = true
                 }
             } else {
                 dialogFragment.show(activity!!.supportFragmentManager, "BookDialog")
@@ -204,18 +222,30 @@ class RoomBookingFragment : Fragment(), IClosable {
      * Close dialog
      */
     override fun close() {
+        Log("Start close dialog")
         if (currentDialogFragment != null) {
             activity!!.supportFragmentManager.beginTransaction().apply {
                 remove(currentDialogFragment!!)
                 commit()
             }
             dialogView.visibility = View.GONE
-            dialogView.parent?.let {
-                (it as ViewGroup).removeView(dialogView)
+            try {
+                dialogView.parent?.let {
+                    (it as ViewGroup).removeView(dialogView)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
+
         }
         viewModel.keyboardWrapper?.onBookDialogClose()
     }
+
+    private var closeOnTouch: Boolean = false
+        set(value) {
+
+            field = value
+        }
 
     private fun showMessage(type: Boolean, headText: String, messageText: String) {
         val layout: View = LayoutInflater.from(context).inflate(R.layout.info_message, null)
