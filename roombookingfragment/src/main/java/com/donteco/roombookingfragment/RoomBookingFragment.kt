@@ -89,6 +89,10 @@ class RoomBookingFragment : Fragment(), IClosable {
             layout.room_name.text = it
         })
 
+        viewModel.additionalText.observe(viewLifecycleOwner, Observer {
+            layout.room_additional_message.text = it
+        })
+
         viewModel.time.observe(viewLifecycleOwner, Observer {
             layout.time.text = it
         })
@@ -111,6 +115,7 @@ class RoomBookingFragment : Fragment(), IClosable {
             layout.time.setTextColor(it)
             layout.room_name.setTextColor(it)
             layout.btn_calendar.setColorFilter(it)
+            layout.room_additional_message.setTextColor(it)
         })
 
         viewModel.messages.observe(viewLifecycleOwner, Observer {

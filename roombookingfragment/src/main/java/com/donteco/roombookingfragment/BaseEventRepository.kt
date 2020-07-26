@@ -21,6 +21,10 @@ class BaseEventRepository : IEventsRepository {
         return _roomName
     }
 
+    override fun getAdditionalText(): LiveData<String> {
+        return MutableLiveData("")
+    }
+
     override fun getEventsLive(): LiveData<Array<Event>?> {
         return rep
     }

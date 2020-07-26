@@ -88,4 +88,39 @@
     <!--        </LinearLayout>-->
     <!--        android:text='@{viewModel.status == MainViewModel.Status.STATUS_AVAILABLE ? "Бронировать" : "Управление"}'-->
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/room_additional_message"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center|end"
+        android:maxLines="2"
+        android:textColor="#FFFFFF"
+        app:autoSizeMinTextSize="1sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toTopOf="@+id/guideline15"
+        app:layout_constraintEnd_toEndOf="@+id/guideline16"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline20"
+        tools:text="Отсутсвует подключение \n данные могут быть не актуальны" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.12" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.96" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.04" />
 </androidx.constraintlayout.widget.ConstraintLayout>

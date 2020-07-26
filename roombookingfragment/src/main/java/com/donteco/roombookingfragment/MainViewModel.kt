@@ -20,6 +20,7 @@ class MainViewModel(
     private var isErrorState = false
 
     val roomName = repo.getRoomName()
+    val additionalText = repo.getAdditionalText()
 
     private val currentEvent: MutableLiveData<Event?> = MutableLiveData()
 
