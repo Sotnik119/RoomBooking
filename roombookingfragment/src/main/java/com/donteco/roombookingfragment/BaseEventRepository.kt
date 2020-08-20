@@ -22,7 +22,7 @@ class BaseEventRepository : IEventsRepository {
     }
 
     override fun getAdditionalText(): LiveData<String> {
-        return MutableLiveData("")
+        return MutableLiveData("Отсутствует соединение с сервером.\nДанные могут быть неактуальными")
     }
 
     override fun getEventsLive(): LiveData<Array<Event>?> {

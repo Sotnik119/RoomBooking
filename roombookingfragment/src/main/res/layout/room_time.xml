@@ -40,14 +40,14 @@
         android:maxLines="1"
         android:textAlignment="center"
         android:textColor="#fff"
-        app:autoSizeMinTextSize="15sp"
         app:autoSizeMaxTextSize="250sp"
+        app:autoSizeMinTextSize="15sp"
         app:autoSizeTextType="uniform"
-        app:layout_constraintWidth_percent="0.7"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline6"
+        app:layout_constraintWidth_percent="0.7"
         tools:text="16:20" />
 
     <!--        <LinearLayout-->
@@ -92,14 +92,14 @@
         android:id="@+id/room_additional_message"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:gravity="center|end"
+        android:gravity="center|start"
         android:maxLines="2"
         android:textColor="#FFFFFF"
         app:autoSizeMinTextSize="1sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toTopOf="@+id/guideline15"
         app:layout_constraintEnd_toEndOf="@+id/guideline16"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline17"
         app:layout_constraintTop_toTopOf="@+id/guideline20"
         tools:text="Отсутсвует подключение \n данные могут быть не актуальны" />
 
@@ -108,7 +108,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.12" />
+        app:layout_constraintGuide_percent="0.18" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline16"
@@ -116,6 +116,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.96" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.04" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline20"
