@@ -72,10 +72,29 @@ class MainViewModel(
         when (it) {
             Status.STATUS_AVAILABLE -> "\nДоступно\n"
             Status.STATUS_OCCUPIED -> currentEvent.value?.toString() ?: ""
-            Status.STATUS_WAIT -> "Доступно на ${getTextForMinutes(
-                currentEvent.value?.getRemainedTime() ?: 0
-            )}"
+            Status.STATUS_WAIT -> "Доступно на ${
+                getTextForMinutes(currentEvent.value?.getRemainedTime() ?: 0)
+            }"
             else -> "\n$errorText\n"
+        }
+    }
+
+    val nextEventText: LiveData<String> = currentEvent.map {
+        val noEventsText = "\nНет ближайших событий\n"
+        val eventList = eventList.value?.sortedBy { it.startDate }
+
+        if (it == null || eventList.isNullOrEmpty()) {
+            noEventsText
+        } else {
+            val nextevent = if (!it.isEventTakesPlaceNow())
+                it
+            else
+                eventList.getOrNull(eventList.indexOf(it) + 1)
+
+            if (nextevent == null)
+               noEventsText
+            else
+                "Следующее событие:\n$nextevent"
         }
     }
 

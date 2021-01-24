@@ -101,6 +101,10 @@ class RoomBookingFragment : Fragment(), IClosable {
             layout.status.text = it
         })
 
+        viewModel.nextEventText.observe(viewLifecycleOwner, Observer {
+            layout.next_event.text = it
+        })
+
         viewModel.bookButtonText.observe(viewLifecycleOwner, Observer {
             layout.btn_book_room.text = it
         })

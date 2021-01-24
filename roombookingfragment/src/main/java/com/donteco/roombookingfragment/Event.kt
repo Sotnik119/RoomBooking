@@ -14,10 +14,25 @@ data class Event(
     private val format24 = SimpleDateFormat("HH:mm", Locale.getDefault())
     private val format12 = SimpleDateFormat("hh:mm a", Locale.getDefault())
 
+    //full date formats
+    private val fullFormat24 = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
+    private val fullFormat12 = SimpleDateFormat("dd.MM.yyyy hh:mm a", Locale.getDefault())
+
+
     override fun toString(): String {
         return "$name\n" +
-                "${format24.format(startDate)} - ${format24.format(endDate)}\n" +
-                owner
+                (if (isToday()) format24.format(startDate) else fullFormat24.format(startDate)) +
+                " - " +
+                (if (isToday()) format24.format(endDate) else fullFormat24.format(endDate)) +
+                if (owner.isNotEmpty()) "\n $owner" else ""
+    }
+
+    fun isToday(): Boolean {
+        val todayStart = Date().atStartOfDay()
+        val todayEnd = Date().atEndOfDay()
+
+        return startDate.after(todayStart) && startDate.before(todayEnd)
+                || startDate.after(todayStart) && startDate.before(todayEnd)
     }
 
     fun isEventTakesPlaceNow(): Boolean {
@@ -31,7 +46,6 @@ data class Event(
     fun getFormattedTime(timeFormat: Format): String {
         val format = if (timeFormat == Format.FORMAT_24H) format24 else format12
         return "${startDate.toFormattedString(format)} - ${endDate.toFormattedString(format)}\n"
-//                owner
     }
 
 

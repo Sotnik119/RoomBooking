@@ -43,6 +43,26 @@
         app:layout_constraintTop_toTopOf="@+id/guideline"
         tools:text="\nДоступно\n" />
 
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/next_event"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:gravity="start|center_vertical"
+        android:textAlignment="viewStart"
+        android:textColor="#FFFFFF"
+        android:maxLines="3"
+        android:lines="3"
+        app:autoSizeMinTextSize="1dp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline2"
+        tools:text="Следующее событие:\nЕжемеячное собрание аккаунтов\n18:00-19:30 Организатор: Петр демченко" />
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/btn_calendar"
         android:layout_width="0dp"
@@ -61,14 +81,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.25" />
+        app:layout_constraintGuide_percent="0.2" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.75" />
+        app:layout_constraintGuide_percent="0.64" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline5"
